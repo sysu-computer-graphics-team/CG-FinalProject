@@ -87,15 +87,34 @@ void Game::Update()
 void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3 frontOfCar, glm::vec3 upOfCar, float deltaTime)
 {
 	float velocity = SPEED * deltaTime;
-	glm::vec3 rightOfCar = glm::normalize(glm::cross(frontOfCar, upOfCar));
-	if (direction == FORWARD)
-		carShift = frontOfCar * velocity;
-	if (direction == BACKWARD)
-		carShift = -frontOfCar * velocity;
-	if (direction == LEFT)
-		carShift = rightOfCar * velocity;
-	if (direction == RIGHT)
-		carShift = -rightOfCar * velocity;
+	glm::vec3 front;
+	front.x = -cos(glm::radians(Yaw));
+	front.y = 0;
+	front.z = sin(glm::radians(Yaw));
+	carfront = glm::normalize(front);
+	// Also re-calculate the Right and Up vector
+	glm::vec3 rightOfCar = glm::normalize(glm::cross(carfront, upOfCar));
+	if (direction == FORWARD) {
+		carShift =carfront * velocity;
+	}
+	if (direction == LEFT_FORWARD) {
+		axis = glm::vec3(0, 1, 0);
+		Yaw += 1;
+	}
+	if (direction == RIGHT_FORWARD) {
+
+	}
+	if (direction == LEFT_BACKWARD) {
+		axis = glm::vec3(0, 1, 0);
+		Yaw -= 1;
+	}
+	if (direction == RIGHT_BACKWARD) {
+		axis = glm::vec3(0, -1, 0);
+		Yaw -= 1;
+	}
+	if (direction == BACKWARD) {
+		carShift = -carfront * velocity;
+	}
 }
 
 void Game::Render()
@@ -137,7 +156,9 @@ void Game::Render()
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, carPos);
 	//model = glm::translate(model, glm::vec3(1.5f, 0.0f, 3.0f));
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	model = glm::rotate(model, glm::radians(180.0f), axis);
+	model = glm::rotate(model, glm::radians(Yaw), axis);
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
 
 	fiatCar->Draw();
