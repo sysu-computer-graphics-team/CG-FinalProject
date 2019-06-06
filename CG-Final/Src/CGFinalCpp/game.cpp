@@ -6,6 +6,7 @@
 #include <CGFinalHeader/customObject/border.h>
 #include <CGFinalHeader/customObject/plane.h>
 #include <CGFinalHeader/modelObject/ModelObject.h>
+#include <CGFinalHeader/camera/camera.h>
 
 
 // Custom Object
@@ -13,11 +14,15 @@ Plane *plane;
 Border *border;
 
 // Model Object
-ModelObject *nanosuit;
+//ModelObject *nanosuit;
 ModelObject *fiatCar;
 
 // lightPos
 glm::vec3 lightPos(0.0f, 10.0f, 0.0f);
+
+// position&shift of car
+glm::vec3 carPos(0.0f, 0.0f, 0.0f);
+glm::vec3 carShift(0.0f, 0.0f, 0.0f);
 
 Game::Game(GLuint width, GLuint height, Camera *camera)
 	: State(GameState::GAME_ACTIVE), isBlinn(false), Width(width), Height(height), camera(camera)
@@ -29,7 +34,7 @@ Game::~Game()
 {
 	delete plane;
 	delete border;
-	delete nanosuit;
+	//delete nanosuit;
 	delete fiatCar;
 }
 
@@ -57,7 +62,7 @@ void Game::Init()
 	ResourceManager::LoadTexture("../Resources/textures/animal_skin_0.jpg", GL_TRUE, "animal_skin_0");
 
 	// Load models
-	ResourceManager::LoadModel("../Resources/objects/nanosuit/nanosuit.obj", "nanosuit");
+	//ResourceManager::LoadModel("../Resources/objects/nanosuit/nanosuit.obj", "nanosuit");
 	ResourceManager::LoadModel("../Resources/objects/fiat/Fiat_127_A_1971.obj", "fiatCar");
 
 	// New Scene Object
@@ -67,20 +72,30 @@ void Game::Init()
 	border = new Border(ResourceManager::GetShader("BasicShader"), ResourceManager::GetTexture("wood"));
 
 	// nanosuit
-	nanosuit = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("nanosuit"));
+	//nanosuit = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("nanosuit"));
 	// fiatCar
 	fiatCar = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("fiatCar"));
 }
 
-void Game::Update(GLfloat dt)
+void Game::Update()
 {
-
+	carPos += carShift;
+	carShift = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 
-void Game::ProcessInput(GLFWwindow *window, GLfloat dt)
+void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3 frontOfCar, glm::vec3 upOfCar, float deltaTime)
 {
-
+	float velocity = SPEED * deltaTime;
+	glm::vec3 rightOfCar = glm::normalize(glm::cross(frontOfCar, upOfCar));
+	if (direction == FORWARD)
+		carShift = frontOfCar * velocity;
+	if (direction == BACKWARD)
+		carShift = -frontOfCar * velocity;
+	if (direction == LEFT)
+		carShift = rightOfCar * velocity;
+	if (direction == RIGHT)
+		carShift = -rightOfCar * velocity;
 }
 
 void Game::Render()
@@ -118,10 +133,11 @@ void Game::Render()
 	ResourceManager::GetShader("BasicModelShader").Use().SetFloat("pointlight.linear", 0.022f);
 	ResourceManager::GetShader("BasicModelShader").Use().SetFloat("pointlight.quadratic", 0.0019f);
 	// Model object that use BasicShader
-	nanosuit->Draw();
+	//nanosuit->Draw();
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(1.5f, 0.0f, 3.0f));
-	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::translate(model, carPos);
+	//model = glm::translate(model, glm::vec3(1.5f, 0.0f, 3.0f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
 
 	fiatCar->Draw();

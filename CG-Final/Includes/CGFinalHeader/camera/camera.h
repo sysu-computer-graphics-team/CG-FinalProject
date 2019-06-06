@@ -70,19 +70,20 @@ public:
 	}
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-	void ProcessKeyboard(Camera_Movement direction, float deltaTime)
+	void ProcessKeyboard(Camera_Movement direction, glm::vec3 frontOfCar, glm::vec3 upOfCar, float deltaTime)
 	{
 
 		float velocity = MovementSpeed * deltaTime;
-		glm::vec3 front = glm::normalize(glm::vec3(Front.x, 0, Front.z));
+		glm::vec3 rightOfCar = glm::normalize(glm::cross(frontOfCar, upOfCar));
+		//glm::vec3 front = glm::normalize(glm::vec3(Front.x, 0, Front.z));
 		if (direction == FORWARD)
-			Position += Front * velocity;
+			Position += frontOfCar * velocity;
 		if (direction == BACKWARD)
-			Position -= Front * velocity;
+			Position -= frontOfCar * velocity;
 		if (direction == LEFT)
-			Position -= Right * velocity;
+			Position -= rightOfCar * velocity;
 		if (direction == RIGHT)
-			Position += Right * velocity;
+			Position += rightOfCar * velocity;
 		// make sure the user stays at the ground level
 		// Position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
 
