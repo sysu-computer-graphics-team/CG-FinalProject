@@ -160,8 +160,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void processInput(GLFWwindow* window) {
+	frontOfCar = SimpleScene.getFrontOfCar();
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        //camera.ProcessKeyboard(FORWARD, frontOfCar, upOfCar, deltaTime);
+        camera.ProcessKeyboard(FORWARD, frontOfCar, upOfCar, deltaTime);
 		
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			SimpleScene.ProcessInput(window, LEFT_FORWARD, frontOfCar, upOfCar, deltaTime);
@@ -174,7 +175,7 @@ void processInput(GLFWwindow* window) {
 		}
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        //camera.ProcessKeyboard(BACKWARD, frontOfCar, upOfCar, deltaTime);
+        camera.ProcessKeyboard(BACKWARD, frontOfCar, upOfCar, deltaTime);
 		
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			SimpleScene.ProcessInput(window, LEFT_BACKWARD, frontOfCar, upOfCar, deltaTime);
