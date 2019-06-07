@@ -98,20 +98,20 @@ void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3
 		carShift +=carfront * velocity;
 	}
 	if (direction == LEFT_FORWARD) {
-		axis = glm::vec3(0, 1, 0);
 		Yaw += 1;
 	}
 	if (direction == RIGHT_FORWARD) {
-		axis = glm::vec3(0, 1, 0);
-		Yaw += 1;
+		Yaw -= 1;
+		float v = velocity * 2;
+		carShift += carfront * v;
 	}
 	if (direction == LEFT_BACKWARD) {
-		axis = glm::vec3(0, 1, 0);
 		Yaw -= 1;
 	}
 	if (direction == RIGHT_BACKWARD) {
-		axis = glm::vec3(0, 1, 0);
-		Yaw -= 1;
+		Yaw += 1;
+		float v = velocity * 2;
+		carShift += -carfront * v;
 	}
 	if (direction == BACKWARD) {
 		carShift += -carfront * velocity;
@@ -157,9 +157,8 @@ void Game::Render()
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, carPos);
 	//model = glm::translate(model, glm::vec3(1.5f, 0.0f, 3.0f));
-
-	model = glm::rotate(model, glm::radians(180.0f), axis);
-	model = glm::rotate(model, glm::radians(Yaw), axis);
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
 
 	fiatCar->Draw();
