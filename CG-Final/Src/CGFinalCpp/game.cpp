@@ -95,25 +95,26 @@ void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3
 	// Also re-calculate the Right and Up vector
 	glm::vec3 rightOfCar = glm::normalize(glm::cross(carfront, upOfCar));
 	if (direction == FORWARD) {
-		carShift =carfront * velocity;
+		carShift +=carfront * velocity;
 	}
 	if (direction == LEFT_FORWARD) {
 		axis = glm::vec3(0, 1, 0);
 		Yaw += 1;
 	}
 	if (direction == RIGHT_FORWARD) {
-
+		axis = glm::vec3(0, 1, 0);
+		Yaw += 1;
 	}
 	if (direction == LEFT_BACKWARD) {
 		axis = glm::vec3(0, 1, 0);
 		Yaw -= 1;
 	}
 	if (direction == RIGHT_BACKWARD) {
-		axis = glm::vec3(0, -1, 0);
+		axis = glm::vec3(0, 1, 0);
 		Yaw -= 1;
 	}
 	if (direction == BACKWARD) {
-		carShift = -carfront * velocity;
+		carShift += -carfront * velocity;
 	}
 }
 
@@ -165,3 +166,6 @@ void Game::Render()
 
 }
 
+glm::vec3 Game::getFrontOfCar() {
+	return carfront;
+}
