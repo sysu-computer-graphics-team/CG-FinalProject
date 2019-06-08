@@ -89,13 +89,13 @@ void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3
 	float velocity = SPEED * deltaTime;
 	glm::vec3 rightOfCar = glm::normalize(glm::cross(frontOfCar, upOfCar));
 	if (direction == FORWARD)
-		carShift = frontOfCar * velocity;
+		carShift += frontOfCar * velocity;
 	if (direction == BACKWARD)
-		carShift = -frontOfCar * velocity;
+		carShift += -frontOfCar * velocity;
 	if (direction == LEFT)
-		carShift = rightOfCar * velocity;
+		carShift += rightOfCar * velocity;
 	if (direction == RIGHT)
-		carShift = -rightOfCar * velocity;
+		carShift += -rightOfCar * velocity;
 }
 
 void Game::Render()
