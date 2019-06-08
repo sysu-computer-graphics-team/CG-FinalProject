@@ -28,6 +28,8 @@ public:
 	Camera			*camera;
 	// glfw window configure
 	GLuint			Width, Height;
+	GLuint depthMapFBO,depthMap;
+	GLuint planeVAO;
 	float Yaw = -90;
 	glm::vec3 axis = glm::vec3(0,1,0);
 	glm::vec3 carfront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -40,6 +42,7 @@ public:
 	void ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3 frontOfCar, glm::vec3 upOfCar, float deltaTime);
 	void Update();
 	void Render();
+	glm::vec3 getFrontOfCar();
 };
 
 #endif // GAME_H
