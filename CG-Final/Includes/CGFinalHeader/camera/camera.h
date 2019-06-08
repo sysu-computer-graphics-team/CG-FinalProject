@@ -14,7 +14,11 @@ enum Camera_Movement {
 	FORWARD,
 	BACKWARD,
 	LEFT,
-	RIGHT
+	RIGHT,
+	LEFT_FORWARD,
+	RIGHT_FORWARD,
+	LEFT_BACKWARD,
+	RIGHT_BACKWARD
 };
 
 // Default camera values
@@ -80,10 +84,10 @@ public:
 			Position += frontOfCar * velocity;
 		if (direction == BACKWARD)
 			Position -= frontOfCar * velocity;
-		if (direction == LEFT)
-			Position -= rightOfCar * velocity;
-		if (direction == RIGHT)
-			Position += rightOfCar * velocity;
+	//	if (direction == LEFT)
+	//		Position -= rightOfCar * velocity;
+	//	if (direction == RIGHT)
+	//		Position += rightOfCar * velocity;
 		// make sure the user stays at the ground level
 		// Position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
 
