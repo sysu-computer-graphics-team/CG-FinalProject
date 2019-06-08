@@ -160,22 +160,36 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void processInput(GLFWwindow* window) {
+	frontOfCar = SimpleScene.getFrontOfCar();
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         camera.ProcessKeyboard(FORWARD, frontOfCar, upOfCar, deltaTime);
-		SimpleScene.ProcessInput(window, FORWARD, frontOfCar, upOfCar, deltaTime);
+		
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			SimpleScene.ProcessInput(window, LEFT_FORWARD, frontOfCar, upOfCar, deltaTime);
+		}
+		else  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			SimpleScene.ProcessInput(window, RIGHT_FORWARD, frontOfCar, upOfCar, deltaTime);
+		}
+		else {
+			SimpleScene.ProcessInput(window, FORWARD, frontOfCar, upOfCar, deltaTime);
+		}
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         camera.ProcessKeyboard(BACKWARD, frontOfCar, upOfCar, deltaTime);
-		SimpleScene.ProcessInput(window, BACKWARD, frontOfCar, upOfCar, deltaTime);
+		
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			SimpleScene.ProcessInput(window, LEFT_BACKWARD, frontOfCar, upOfCar, deltaTime);
+		}
+		else  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			SimpleScene.ProcessInput(window, RIGHT_BACKWARD, frontOfCar, upOfCar, deltaTime);
+		}
+		else {
+			SimpleScene.ProcessInput(window, BACKWARD, frontOfCar, upOfCar, deltaTime);
+		}
     }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        camera.ProcessKeyboard(LEFT, frontOfCar, upOfCar, deltaTime);
-		SimpleScene.ProcessInput(window, RIGHT, frontOfCar, upOfCar, deltaTime);
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        camera.ProcessKeyboard(RIGHT, frontOfCar, upOfCar, deltaTime);
-		SimpleScene.ProcessInput(window, LEFT, frontOfCar, upOfCar, deltaTime);
-    }
+
+    
+   
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
