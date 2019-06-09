@@ -35,6 +35,8 @@ public:
 	static Model LoadModel(const GLchar *file, std::string name);
 	// Retrieves a stored model
 	static Model *GetModel(std::string name);
+	// Load skybox texture
+	static unsigned int LoadCubemap(vector<std::string> faces);
 
 	// Properly de-allocates all loaded resources
 	static void Clear();
@@ -45,7 +47,6 @@ private:
 	static Shader loadShaderFromFile(const GLchar *vShaderFile, const GLchar *fShaderFile, const GLchar *gShaderFile = nullptr);
 	// Loads a single texture from file
 	static Texture2D loadTextureFromFile(const GLchar *file, GLboolean alpha);
-
 };
 
 
