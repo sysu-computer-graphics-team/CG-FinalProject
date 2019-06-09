@@ -25,7 +25,6 @@ Skybox* skybox;
 glm::vec3 lightPos(0.0f, 10.0f, 0.0f);
 
 // position&shift of car
-glm::vec3 carPos(0.0f, 0.0f, 0.0f);
 glm::vec3 carShift(0.0f, 0.0f, 0.0f);
 
 const bool renderSkybox = false;
