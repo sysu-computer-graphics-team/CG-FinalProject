@@ -84,16 +84,23 @@ public:
 			Position += frontOfCar * velocity;
 		if (direction == BACKWARD)
 			Position -= frontOfCar * velocity;
-	//	if (direction == LEFT)
-	//		Position -= rightOfCar * velocity;
-	//	if (direction == RIGHT)
-	//		Position += rightOfCar * velocity;
+		if (direction == LEFT_FORWARD)
+			ProcessMouseMovement(-10, 0, TRUE);
+		if (direction == RIGHT_FORWARD)
+			ProcessMouseMovement(10, 0, TRUE);
+		if (direction == LEFT_BACKWARD)
+			ProcessMouseMovement(10, 0, TRUE);
+		if (direction == RIGHT_BACKWARD)
+			ProcessMouseMovement(-10, 0, TRUE);
 		// make sure the user stays at the ground level
 		// Position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
 
 		// std::cout << "Position: (" << Position.x << ", " << Position.y << ", " << Position.z << ")" << std::endl;
 	}
 
+	void setPostion(glm::vec3 pos) {
+		Position = pos;
+	}
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
 	{
