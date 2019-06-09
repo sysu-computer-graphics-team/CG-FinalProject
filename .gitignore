@@ -275,3 +275,5 @@ g[0-9]*
 g0
 FlyMatrix*
 *.txt
+
+!assimp-vc140-mt.dll

@@ -14,6 +14,7 @@ public:
 	// Render state
 	GLuint VAO;
 	unsigned int cubemapTexture;
+	const float skyLength = 50.0f;
 
 	Skybox(Shader &shader, unsigned int &texture)
 		: CustomObject(shader), cubemapTexture(texture)
@@ -32,7 +33,6 @@ public:
 
 		// Configure VAO/VBO
 		GLuint VBO;
-		float skyLength = 20.0f;
 		float SkyboxVertices[] = {
 			-skyLength,  skyLength, -skyLength,
 			-skyLength, -skyLength, -skyLength,
