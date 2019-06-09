@@ -74,8 +74,5 @@
     <ClInclude Include="Includes\CGFinalHeader\modelObject\ModelObject.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\CGFinalHeader\skybox\skybox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
