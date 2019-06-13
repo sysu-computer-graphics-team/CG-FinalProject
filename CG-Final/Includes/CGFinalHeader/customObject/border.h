@@ -98,18 +98,18 @@ public:
 
 	void Draw()
 	{
-		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 10.5f));
-		model = glm::scale(model, glm::vec3(11.0f, 0.5f, 0.5f));
-		this->shader.Use().SetMatrix4("model", model);
-
 		glActiveTexture(GL_TEXTURE0);
 		texture.Bind();
 		glBindVertexArray(VAO);
 
+		float blockLength = 2.0f;
+
+		glm::mat4 model(1.0f);
+		model = glm::translate(model, glm::vec3(2 * blockLength, 0.0f, 2 * blockLength));
+		this->shader.Use().SetMatrix4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		model = glm::mat4(1.0f);
+		/*model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.5f));
 		model = glm::scale(model, glm::vec3(11.0f, 0.5f, 0.5f));
 		this->shader.Use().SetMatrix4("model", model);
@@ -127,7 +127,7 @@ public:
 		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(10.0f, 0.5f, 0.5f));
 		this->shader.Use().SetMatrix4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
 		glBindVertexArray(0);
 	}

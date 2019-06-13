@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SCENE_H
-#define SCENE_H
+#ifndef GAME_H
+#define GAME_H
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

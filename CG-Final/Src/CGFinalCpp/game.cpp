@@ -3,18 +3,14 @@
 
 #include <CGFinalHeader/game/game.h>
 #include <CGFinalHeader/resourceManager/resource_manager.h>
-#include <CGFinalHeader/customObject/border.h>
-#include <CGFinalHeader/customObject/plane.h>
 #include <CGFinalHeader/modelObject/ModelObject.h>
 #include <CGFinalHeader/camera/camera.h>
 #include <CGFinalHeader/skybox/skybox.h>
-
-
-// Custom Object
-Plane *plane;
-Border *border;
+#include <CGFinalHeader/scene/scene.h>
 
 // Model Object
+Scene* scene;
+
 //ModelObject *nanosuit;
 ModelObject *fiatCar;
 
@@ -27,7 +23,7 @@ glm::vec3 lightPos(0.0f, 10.0f, 0.0f);
 // position&shift of car
 glm::vec3 carShift(0.0f, 0.0f, 0.0f);
 
-const bool renderSkybox = false;
+const bool renderSkybox = true;
 
 Game::Game(GLuint width, GLuint height, Camera *camera)
 	: State(GameState::GAME_ACTIVE), isBlinn(false), Width(width), Height(height), camera(camera)
@@ -37,9 +33,8 @@ Game::Game(GLuint width, GLuint height, Camera *camera)
 
 Game::~Game()
 {
-	delete plane;
-	delete border;
 	//delete nanosuit;
+	delete scene;
 	delete fiatCar;
 	delete skybox;
 }
@@ -82,11 +77,7 @@ void Game::Init()
 	//ResourceManager::LoadModel("../Resources/objects/nanosuit/nanosuit.obj", "nanosuit");
 	ResourceManager::LoadModel("../Resources/objects/fiat/Fiat_127_A_1971.obj", "fiatCar");
 
-	// New Scene Object
-	// plane
-	plane = new Plane(ResourceManager::GetShader("BasicShader"), ResourceManager::GetTexture("container2_specular"));
-	// border
-	border = new Border(ResourceManager::GetShader("BasicShader"), ResourceManager::GetTexture("wood"));
+	scene = new Scene();
 
 	// skybox
 	skybox = new Skybox(ResourceManager::GetShader("skyShader"), cubemapTexture);
@@ -155,8 +146,7 @@ void Game::Render()
 	ResourceManager::GetShader("BasicShader").Use().SetVector3f("viewPos", this->camera->Position);
 	ResourceManager::GetShader("BasicShader").Use().SetVector3f("lightPos", lightPos);
 	// Custom object that use BasicShader
-	plane->Draw();
-	border->Draw();
+	scene->Draw();
 
 	// BasicModelShader
 	glm::mat4 model = glm::mat4(1.0f);
@@ -188,7 +178,7 @@ void Game::Render()
 	ResourceManager::GetShader("skyShader").Use().SetMatrix4("view",
 		glm::mat4(glm::mat3(this->camera->GetViewMatrix())));
 	ResourceManager::GetShader("skyShader").Use().SetMatrix4("projection", projection);
-	if (!renderSkybox) {
+	if (renderSkybox) {
 		skybox->Draw();
 	}
 }
