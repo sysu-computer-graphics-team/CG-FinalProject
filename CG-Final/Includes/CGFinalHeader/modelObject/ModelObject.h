@@ -26,9 +26,9 @@ public:
 
 	}
 	// Draw ModelObject
-	void Draw()
+	void Draw(GLuint shadowMap)
 	{
-		model->Draw(shader);
+		model->Draw(shader, shadowMap);
 	}
 };
 

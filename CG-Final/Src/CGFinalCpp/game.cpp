@@ -200,7 +200,7 @@ void Game::Render()
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
 	// here should pass a bool value to Mesh Draw, if is depthshader, then do not configure texture
-	fiatCar->Draw();
+	fiatCar->Draw(depthMap);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -248,6 +248,8 @@ void Game::Render()
 	ResourceManager::GetShader("BasicModelShader").Use().SetFloat("pointlight.constant", 1.0f);
 	ResourceManager::GetShader("BasicModelShader").Use().SetFloat("pointlight.linear", 0.022f);
 	ResourceManager::GetShader("BasicModelShader").Use().SetFloat("pointlight.quadratic", 0.0019f);
+	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("lightSpaceMatrix", lightSpaceMatrix);
+	ResourceManager::GetShader("BasicModelShader").Use().SetInteger("shadowMap", 1);
 	// Model object that use BasicShader
 	// nanosuit->Draw();
 
@@ -258,7 +260,7 @@ void Game::Render()
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
 	fiatCar->shader = ResourceManager::GetShader("BasicModelShader");
-	fiatCar->Draw();
+	fiatCar->Draw(depthMap);
 
 	// Skybox Shader
 	ResourceManager::GetShader("skyShader").Use().SetMatrix4("view",

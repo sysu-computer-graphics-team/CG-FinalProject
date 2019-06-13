@@ -67,7 +67,7 @@ public:
 	void Draw()
 	{
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.7f, 0.0f));
 		this->shader.Use().SetMatrix4("model", model);
 
 		glActiveTexture(GL_TEXTURE0);

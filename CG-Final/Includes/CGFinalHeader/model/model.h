@@ -46,11 +46,11 @@ public:
 	}
 
 	// draws the model, and thus all its meshes
-	void Draw(Shader shader)
+	void Draw(Shader shader, GLuint shadowMap)
 	{
 		// configure model matrix
 		for (unsigned int i = 0; i < meshes.size(); i++)
-			meshes[i].Draw(shader);
+			meshes[i].Draw(shader, shadowMap);
 	}
 
 private:
