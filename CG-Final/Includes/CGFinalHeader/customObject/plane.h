@@ -15,6 +15,8 @@ public:
 	GLuint VAO;
 	Texture2D texture;
 
+	GLuint *depthMap = nullptr;
+
 	Plane(Shader &shader, Texture2D &texture)
 		: CustomObject(shader), texture(texture)
 	{ 
@@ -70,7 +72,11 @@ public:
 
 		glActiveTexture(GL_TEXTURE0);
 		texture.Bind();
-
+		if (this->depthMap != nullptr)
+		{
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, *depthMap);
+		}
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);

@@ -32,6 +32,7 @@
     <ClInclude Include="Includes\CGFinalHeader\camera\camera.h" />
     <ClInclude Include="Includes\CGFinalHeader\customObject\border.h" />
     <ClInclude Include="Includes\CGFinalHeader\customObject\custom_object.h" />
+    <ClInclude Include="Includes\CGFinalHeader\customObject\lamp.h" />
     <ClInclude Include="Includes\CGFinalHeader\customObject\plane.h" />
     <ClInclude Include="Includes\CGFinalHeader\game\game.h" />
     <ClInclude Include="Includes\CGFinalHeader\modelObject\ModelObject.h" />

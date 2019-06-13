@@ -1,36 +1,33 @@
 #pragma once
-#ifndef BORDER_H
-#define BORDER_H
+#ifndef LAMP_H
+#define LAMP_H
 
 #include <iostream>
 
 #include <CGFinalHeader/customObject/custom_object.h>
 
-class Border : public CustomObject
+class Lamp : public CustomObject
 {
 public:
 	// Object state
-
+	glm::vec3 *lightPos = nullptr;
 	// Render state
 	GLuint VAO;
-	Texture2D texture;
 
-	GLuint *depthMap = nullptr;
 
-	Border(Shader &shader, Texture2D &texture)
-		: CustomObject(shader), texture(texture)
+	Lamp(Shader &shader) : CustomObject(shader)
 	{
 		this->initRenderData();
 	}
 
-	~Border()
+	~Lamp()
 	{
 		glDeleteVertexArrays(1, &this->VAO);
 	}
 
 	void initRenderData()
 	{
-		std::cout << "BorderObject initRenderData" << std::endl;
+		std::cout << "LampObject initRenderData" << std::endl;
 
 		// Configure VAO/VBO
 		GLuint VBO;
@@ -101,49 +98,15 @@ public:
 	void Draw()
 	{
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 10.5f));
-		model = glm::scale(model, glm::vec3(11.0f, 0.5f, 0.5f));
+		model = glm::translate(model, *lightPos);
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		this->shader.Use().SetMatrix4("model", model);
-
-		glActiveTexture(GL_TEXTURE0);
-		texture.Bind();
-		if (this->depthMap != nullptr) 
-		{
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, *depthMap);
-		}
 		glBindVertexArray(VAO);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -10.5f));
-		model = glm::scale(model, glm::vec3(11.0f, 0.5f, 0.5f));
-		this->shader.Use().SetMatrix4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(10.5f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(10.0f, 0.5f, 0.5f));
-		this->shader.Use().SetMatrix4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(-10.5f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(10.0f, 0.5f, 0.5f));
-		this->shader.Use().SetMatrix4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 4.0f, 0.0f));
-		this->shader.Use().SetMatrix4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
 		glBindVertexArray(0);
 	}
 };
 
 
-#endif	// BORDER_H
+#endif	// LAMP_H

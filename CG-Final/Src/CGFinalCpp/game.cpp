@@ -5,6 +5,7 @@
 #include <CGFinalHeader/resourceManager/resource_manager.h>
 #include <CGFinalHeader/customObject/border.h>
 #include <CGFinalHeader/customObject/plane.h>
+#include <CGFinalHeader/customObject/lamp.h>
 #include <CGFinalHeader/modelObject/ModelObject.h>
 #include <CGFinalHeader/camera/camera.h>
 #include <CGFinalHeader/skybox/skybox.h>
@@ -13,21 +14,25 @@
 // Custom Object
 Plane *plane;
 Border *border;
+Lamp *lamp;
 
 // Model Object
-//ModelObject *nanosuit;
+// ModelObject *nanosuit;
 ModelObject *fiatCar;
 
 // Skybox
 Skybox* skybox;
 
 // lightPos
-glm::vec3 lightPos(0.0f, 10.0f, 0.0f);
+glm::vec3 lightPos(0.0001f, 10.0f, 0.0f);
 
 // position&shift of car
 glm::vec3 carShift(0.0f, 0.0f, 0.0f);
 
 const bool renderSkybox = false;
+
+// shadow size
+const unsigned int SHADOW_WIDTH = 1280, SHADOW_HEIGHT = 1280;
 
 Game::Game(GLuint width, GLuint height, Camera *camera)
 	: State(GameState::GAME_ACTIVE), isBlinn(false), Width(width), Height(height), camera(camera)
@@ -39,6 +44,7 @@ Game::~Game()
 {
 	delete plane;
 	delete border;
+	delete lamp;
 	//delete nanosuit;
 	delete fiatCar;
 	delete skybox;
@@ -54,6 +60,9 @@ void Game::Init()
 	ResourceManager::LoadShader("../Resources/shaders/shader.vs", "../Resources/shaders/shader.fs", nullptr, "BasicShader");
 	ResourceManager::LoadShader("../Resources/shaders/model_loading.vs", "../Resources/shaders/model_loading.fs", nullptr, "BasicModelShader");
 	ResourceManager::LoadShader("../Resources/shaders/skyShader.vs", "../Resources/shaders/skyShader.fs", nullptr, "skyShader");
+	ResourceManager::LoadShader("../Resources/shaders/simpleDepthShader.vs", "../Resources/shaders/simpleDepthShader.fs", nullptr, "DepthShader");
+	ResourceManager::LoadShader("../Resources/shaders/shadow_mapping.vs", "../Resources/shaders/shadow_mapping.fs", nullptr, "ShadowShader");
+	ResourceManager::LoadShader("../Resources/shaders/lamp.vs", "../Resources/shaders/lamp.fs", nullptr, "LampShader");
 
 	// Load textures
 	ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
@@ -79,22 +88,44 @@ void Game::Init()
 	unsigned int cubemapTexture = ResourceManager::LoadCubemap(faces);
 
 	// Load models
-	//ResourceManager::LoadModel("../Resources/objects/nanosuit/nanosuit.obj", "nanosuit");
+	// ResourceManager::LoadModel("../Resources/objects/nanosuit/nanosuit.obj", "nanosuit");
 	ResourceManager::LoadModel("../Resources/objects/fiat/Fiat_127_A_1971.obj", "fiatCar");
 
 	// New Scene Object
 	// plane
-	plane = new Plane(ResourceManager::GetShader("BasicShader"), ResourceManager::GetTexture("container2_specular"));
+	plane = new Plane(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("wood"));
 	// border
-	border = new Border(ResourceManager::GetShader("BasicShader"), ResourceManager::GetTexture("wood"));
-
+	border = new Border(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("wood"));
+	// lamp
+	lamp = new Lamp(ResourceManager::GetShader("LampShader"));
+	lamp->lightPos = &lightPos;
 	// skybox
 	skybox = new Skybox(ResourceManager::GetShader("skyShader"), cubemapTexture);
 
 	// nanosuit
-	//nanosuit = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("nanosuit"));
+	// nanosuit = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("nanosuit"));
 	// fiatCar
 	fiatCar = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("fiatCar"));
+
+	// shadow mapping configure
+	glGenFramebuffers(1, &this->depthMapFBO);
+	glGenTextures(1, &this->depthMap);
+	glBindTexture(GL_TEXTURE_2D, this->depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	// attach depth texture as FBO's depth buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, this->depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Game::Update()
@@ -140,28 +171,72 @@ void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3
 
 void Game::Render()
 {
+	// 1. render depth of scene to texture (from light's perspective)
+
+	glm::mat4 lightProjection, lightView;
+	glm::mat4 lightSpaceMatrix;
+	// default use ortho projection
+	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 30.0f);
+	lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	lightSpaceMatrix = lightProjection * lightView;
+	// reander scane from light's point of view
+	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("lightSpaceMatrix", lightSpaceMatrix);
+
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, this->depthMapFBO);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	// render scene
+	// for custom object, model matrix already configure in Draw() function
+	plane->shader = ResourceManager::GetShader("DepthShader");
+	plane->Draw();
+	border->shader = ResourceManager::GetShader("DepthShader");
+	border->Draw();
+	// for model object, model matrix do not configure in Draw() function, we need to configure model matrix!
+	fiatCar->shader = ResourceManager::GetShader("DepthShader");
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, carPos);
+	// model = glm::translate(model, glm::vec3(1.5f, 0.0f, 3.0f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
+	// here should pass a bool value to Mesh Draw, if is depthshader, then do not configure texture
+	fiatCar->Draw();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// -------------------------------------------------------------------------------------------------------------
+
+	// 2. render scene as normal using the generated depth/shadow map
+	glViewport(0, 0, this->Width, this->Height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	// Configure view and projection
 	glm::mat4 view = this->camera->GetViewMatrix();
-	//glm::mat4 projection = glm::perspective(this->camera->Zoom, (GLfloat)this->Width / this->Height, 0.1f, 100.0f);
 	glm::mat4 projection = glm::perspective(glm::radians(this->camera->Zoom), (GLfloat)this->Width / this->Height, 0.1f, 100.0f);
 
 	// Configure shaders
-	// BasicShader
-	ResourceManager::GetShader("BasicShader").Use().SetMatrix4("view", view);
-	ResourceManager::GetShader("BasicShader").Use().SetMatrix4("projection", projection);
-
-	ResourceManager::GetShader("BasicShader").Use().SetInteger("texture", 0);
-	ResourceManager::GetShader("BasicShader").Use().SetInteger("blinn", this->isBlinn);
-	ResourceManager::GetShader("BasicShader").Use().SetVector3f("viewPos", this->camera->Position);
-	ResourceManager::GetShader("BasicShader").Use().SetVector3f("lightPos", lightPos);
-	// Custom object that use BasicShader
+	// LampShader
+	ResourceManager::GetShader("LampShader").Use().SetMatrix4("view", view);
+	ResourceManager::GetShader("LampShader").Use().SetMatrix4("projection", projection);
+	lamp->Draw();
+	// ShadowShader
+	ResourceManager::GetShader("ShadowShader").Use().SetMatrix4("view", view);
+	ResourceManager::GetShader("ShadowShader").Use().SetMatrix4("projection", projection);
+	ResourceManager::GetShader("ShadowShader").Use().SetMatrix4("lightSpaceMatrix", lightSpaceMatrix);
+	ResourceManager::GetShader("ShadowShader").Use().SetInteger("diffuseTexture", 0);
+	ResourceManager::GetShader("ShadowShader").Use().SetInteger("shadowMap", 1);
+	// ResourceManager::GetShader("ShadowShader").Use().SetInteger("blinn", this->isBlinn);
+	ResourceManager::GetShader("ShadowShader").Use().SetVector3f("viewPos", this->camera->Position);
+	ResourceManager::GetShader("ShadowShader").Use().SetVector3f("lightPos", lightPos);
+	// Custom object that use ShadowShader
+	plane->shader = ResourceManager::GetShader("ShadowShader");
+	plane->depthMap = &this->depthMap;
 	plane->Draw();
+	border->shader = ResourceManager::GetShader("ShadowShader");
+	border->depthMap = &this->depthMap;
 	border->Draw();
 
 	// BasicModelShader
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
-	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("view", this->camera->GetViewMatrix());
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("projection", projection);
 
@@ -174,14 +249,15 @@ void Game::Render()
 	ResourceManager::GetShader("BasicModelShader").Use().SetFloat("pointlight.linear", 0.022f);
 	ResourceManager::GetShader("BasicModelShader").Use().SetFloat("pointlight.quadratic", 0.0019f);
 	// Model object that use BasicShader
-	//nanosuit->Draw();
+	// nanosuit->Draw();
+
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, carPos);
-	//model = glm::translate(model, glm::vec3(1.5f, 0.0f, 3.0f));
+	// model = glm::translate(model, glm::vec3(1.5f, 0.0f, 3.0f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
-
+	fiatCar->shader = ResourceManager::GetShader("BasicModelShader");
 	fiatCar->Draw();
 
 	// Skybox Shader

@@ -28,7 +28,7 @@ public:
 	Camera			*camera;
 	// glfw window configure
 	GLuint			Width, Height;
-	GLuint depthMapFBO,depthMap;
+	GLuint depthMapFBO, depthMap;
 	GLuint planeVAO;
 	float Yaw = -90;
 	glm::vec3 carPos = glm::vec3(0, 0, 0);
