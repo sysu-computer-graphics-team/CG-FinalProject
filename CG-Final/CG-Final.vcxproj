@@ -39,6 +39,7 @@
     <ClInclude Include="Includes\CGFinalHeader\model\mesh.h" />
     <ClInclude Include="Includes\CGFinalHeader\model\model.h" />
     <ClInclude Include="Includes\CGFinalHeader\resourceManager\resource_manager.h" />
+    <ClInclude Include="Includes\CGFinalHeader\scene\scene.h" />
     <ClInclude Include="Includes\CGFinalHeader\shader\shader.h" />
     <ClInclude Include="Includes\CGFinalHeader\skybox\skybox.h" />
     <ClInclude Include="Includes\CGFinalHeader\texture\texture.h" />

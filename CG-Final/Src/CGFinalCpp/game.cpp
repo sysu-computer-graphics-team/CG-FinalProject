@@ -3,21 +3,19 @@
 
 #include <CGFinalHeader/game/game.h>
 #include <CGFinalHeader/resourceManager/resource_manager.h>
-#include <CGFinalHeader/customObject/border.h>
-#include <CGFinalHeader/customObject/plane.h>
-#include <CGFinalHeader/customObject/lamp.h>
 #include <CGFinalHeader/modelObject/ModelObject.h>
 #include <CGFinalHeader/camera/camera.h>
 #include <CGFinalHeader/skybox/skybox.h>
+#include <CGFinalHeader/scene/scene.h>
 
 
 // Custom Object
-Plane *plane;
-Border *border;
 Lamp *lamp;
 
 // Model Object
-// ModelObject *nanosuit;
+Scene* scene;
+
+//ModelObject *nanosuit;
 ModelObject *fiatCar;
 
 // Skybox
@@ -29,7 +27,7 @@ glm::vec3 lightPos(0.0001f, 10.0f, 0.0f);
 // position&shift of car
 glm::vec3 carShift(0.0f, 0.0f, 0.0f);
 
-const bool renderSkybox = false;
+const bool renderSkybox = true;
 
 // shadow size
 const unsigned int SHADOW_WIDTH = 1280, SHADOW_HEIGHT = 1280;
@@ -42,10 +40,9 @@ Game::Game(GLuint width, GLuint height, Camera *camera)
 
 Game::~Game()
 {
-	delete plane;
-	delete border;
 	delete lamp;
 	//delete nanosuit;
+	delete scene;
 	delete fiatCar;
 	delete skybox;
 }
@@ -92,10 +89,7 @@ void Game::Init()
 	ResourceManager::LoadModel("../Resources/objects/fiat/Fiat_127_A_1971.obj", "fiatCar");
 
 	// New Scene Object
-	// plane
-	plane = new Plane(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("wood"));
-	// border
-	border = new Border(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("wood"));
+	scene = new Scene();
 	// lamp
 	lamp = new Lamp(ResourceManager::GetShader("LampShader"));
 	lamp->lightPos = &lightPos;
@@ -266,7 +260,7 @@ void Game::Render()
 	ResourceManager::GetShader("skyShader").Use().SetMatrix4("view",
 		glm::mat4(glm::mat3(this->camera->GetViewMatrix())));
 	ResourceManager::GetShader("skyShader").Use().SetMatrix4("projection", projection);
-	if (!renderSkybox) {
+	if (renderSkybox) {
 		skybox->Draw();
 	}
 }

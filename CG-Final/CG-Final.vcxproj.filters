@@ -77,10 +77,7 @@
     <ClInclude Include="Includes\CGFinalHeader\skybox\skybox.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\CGFinalHeader\customObject\lamp.h">
+    <ClInclude Include="Includes\CGFinalHeader\scene\scene.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
