@@ -7,9 +7,9 @@
 #include <CGFinalHeader/camera/camera.h>
 #include <CGFinalHeader/skybox/skybox.h>
 #include <CGFinalHeader/scene/scene.h>
+#include <CGFinalHeader/customObject/lamp.h>
 
 
-// Custom Object
 Lamp *lamp;
 
 // Model Object
@@ -181,10 +181,7 @@ void Game::Render()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	// render scene
 	// for custom object, model matrix already configure in Draw() function
-	plane->shader = ResourceManager::GetShader("DepthShader");
-	plane->Draw();
-	border->shader = ResourceManager::GetShader("DepthShader");
-	border->Draw();
+	scene->Draw();
 	// for model object, model matrix do not configure in Draw() function, we need to configure model matrix!
 	fiatCar->shader = ResourceManager::GetShader("DepthShader");
 	glm::mat4 model = glm::mat4(1.0f);
@@ -223,12 +220,7 @@ void Game::Render()
 	ResourceManager::GetShader("ShadowShader").Use().SetVector3f("viewPos", this->camera->Position);
 	ResourceManager::GetShader("ShadowShader").Use().SetVector3f("lightPos", lightPos);
 	// Custom object that use ShadowShader
-	plane->shader = ResourceManager::GetShader("ShadowShader");
-	plane->depthMap = &this->depthMap;
-	plane->Draw();
-	border->shader = ResourceManager::GetShader("ShadowShader");
-	border->depthMap = &this->depthMap;
-	border->Draw();
+	scene->reDraw(&this->depthMap);
 
 	// BasicModelShader
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("view", this->camera->GetViewMatrix());

@@ -109,6 +109,11 @@ public:
 	{
 		glActiveTexture(GL_TEXTURE0);
 		texture.Bind();
+		if (this->depthMap != nullptr)
+		{
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, *depthMap);
+		}
 		glBindVertexArray(VAO);
 
 		float blockLength = 2.0f;
