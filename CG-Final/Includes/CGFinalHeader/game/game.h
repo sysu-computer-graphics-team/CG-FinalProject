@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include <CGFinalHeader/camera/camera.h>
+#include <CGFinalHeader/mytext/mytext.h>
 // Represent the current state of the game
 enum GameState
 {
@@ -31,6 +32,8 @@ public:
 	GLuint depthMapFBO, depthMap;
 	GLuint planeVAO;
 	float Yaw = -90;
+	myText mytext;
+	std::string str;
 	glm::vec3 carPos = glm::vec3(0, 0, 0);
 	glm::vec3 axis = glm::vec3(0,1,0);
 	glm::vec3 carfront = glm::vec3(0.0f, 0.0f, -1.0f);

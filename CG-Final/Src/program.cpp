@@ -9,7 +9,8 @@
 #include <CGFinalHeader/camera/camera.h>
 #include <CGFinalHeader/game/game.h>
 #include <CGFinalHeader/resourceManager/resource_manager.h>
-
+#include <ft2build.h>
+#include FT_FREETYPE_H 
 // glfw callback function
 static void glfw_error_callback(GLint error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -23,9 +24,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void processInput(GLFWwindow* window);
 
 // The Width of the screen
-const GLuint SCREEN_WIDTH = 1800;
+const GLuint SCREEN_WIDTH = 800;
 // The Height of the screen
-const GLuint SCREEN_HEIGHT = 1600;
+const GLuint SCREEN_HEIGHT = 600;
 // Mouse capture flag
 bool mouseCaptured = true;
 
@@ -162,36 +163,42 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void processInput(GLFWwindow* window) {
 	frontOfCar = SimpleScene.getFrontOfCar();
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        //camera.ProcessKeyboard(FORWARD, frontOfCar, upOfCar, deltaTime);
-		
+        //camera.ProcessKeyboard(FORWARD, frontOfCar, upOfCar, deltaTime);	
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			camera.ProcessKeyboard(LEFT_FORWARD, frontOfCar, upOfCar, deltaTime);
 			SimpleScene.ProcessInput(window, LEFT_FORWARD, frontOfCar, upOfCar, deltaTime);
+			SimpleScene.str = "speed : 30";
+
 		}
 		else  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 			camera.ProcessKeyboard(RIGHT_FORWARD, frontOfCar, upOfCar, deltaTime);
 			SimpleScene.ProcessInput(window, RIGHT_FORWARD, frontOfCar, upOfCar, deltaTime);
+			SimpleScene.str = "speed : 30";
 		}
 		else {
 			SimpleScene.ProcessInput(window, FORWARD, frontOfCar, upOfCar, deltaTime);
+			SimpleScene.str = "speed : 50";
 		}
     }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         //camera.ProcessKeyboard(BACKWARD, frontOfCar, upOfCar, deltaTime);
 		
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			camera.ProcessKeyboard(LEFT_BACKWARD, frontOfCar, upOfCar, deltaTime);
 			SimpleScene.ProcessInput(window, LEFT_BACKWARD, frontOfCar, upOfCar, deltaTime);
+			SimpleScene.str = "speed : 30";
 		}
 		else  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 			camera.ProcessKeyboard(RIGHT_BACKWARD, frontOfCar, upOfCar, deltaTime);
 			SimpleScene.ProcessInput(window, RIGHT_BACKWARD, frontOfCar, upOfCar, deltaTime);
+			SimpleScene.str = "speed : 30";
 		}
 		else {
 			SimpleScene.ProcessInput(window, BACKWARD, frontOfCar, upOfCar, deltaTime);
+			SimpleScene.str = "speed : 50";
 		}
     }
-
+	else SimpleScene.str = "speed : 0";
 	glm::vec3 rightOfCar = glm::normalize(glm::cross(frontOfCar, upOfCar));
 	glm::vec3 Postion = SimpleScene.carPos;
 	glm::vec3 backShift = glm::vec3(-5*frontOfCar.x, -5*frontOfCar.y, -5*frontOfCar.z);
