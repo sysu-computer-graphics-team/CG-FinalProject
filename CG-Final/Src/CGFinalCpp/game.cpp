@@ -292,7 +292,7 @@ void Game::Render()
 		ResourceManager::GetShader("explodeShader").Use().SetMatrix4("view", view);
 		ResourceManager::GetShader("explodeShader").Use().SetMatrix4("projection", projection);
 		ResourceManager::GetShader("explodeShader").Use().SetFloat("time", timeCounter);
-		timeCounter = (timeCounter + 0.01f) <= 1.5f ? (timeCounter + 0.01f) : 1.5f;
+		timeCounter = (timeCounter + 0.015f) <= 1.5f ? (timeCounter + 0.015f) : 1.5f;
 		if (timeCounter >= 1.5f)
 			renderOldHouseFlag = false;
 		// cout << timeCounter << endl;
