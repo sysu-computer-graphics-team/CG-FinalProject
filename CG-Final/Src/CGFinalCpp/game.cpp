@@ -63,7 +63,8 @@ void Game::Init()
 	ResourceManager::LoadShader("../Resources/shaders/simpleDepthShader.vs", "../Resources/shaders/simpleDepthShader.fs", nullptr, "DepthShader");
 	ResourceManager::LoadShader("../Resources/shaders/shadow_mapping.vs", "../Resources/shaders/shadow_mapping.fs", nullptr, "ShadowShader");
 	ResourceManager::LoadShader("../Resources/shaders/lamp.vs", "../Resources/shaders/lamp.fs", nullptr, "LampShader");
-
+	ResourceManager::LoadShader("../Resources/shaders/textShader.vs", "../Resources/shaders/textShader.fs", nullptr, "textShader");
+	
 	// Load textures
 	ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
 	ResourceManager::LoadTexture("../Resources/textures/block_solid.png", GL_TRUE, "block_solid");
@@ -126,6 +127,8 @@ void Game::Init()
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	mytext.init();
 }
 
 void Game::Update()
@@ -269,6 +272,12 @@ void Game::Render()
 	if (!renderSkybox) {
 		skybox->Draw();
 	}
+	
+	// Compile and setup the textshader
+	projection = glm::ortho(0.0f, static_cast<GLfloat>(Width), 0.0f, static_cast<GLfloat>(Height));
+	ResourceManager::GetShader("textShader").Use().SetMatrix4("projection", projection);
+	mytext.RenderText(ResourceManager::GetShader("textShader"), str, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+
 }
 
 glm::vec3 Game::getFrontOfCar() {
