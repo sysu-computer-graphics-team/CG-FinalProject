@@ -16,6 +16,7 @@ public:
 	Texture2D texture;
 	float length = 1.0f;
 	float width = 1.0f;
+	float height = 0.5f;
 
 	GLuint *depthMap = nullptr;
 
@@ -43,47 +44,47 @@ public:
 		GLuint VBO;
 		float borderVertices[] = {
 			// back face
-			-length, -1.0f, -width,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-			 length,  1.0f, -width,  0.0f,  0.0f, -1.0f, length, width, // top-right
-			 length, -1.0f, -width,  0.0f,  0.0f, -1.0f, length, 0.0f, // bottom-right         
-			 length,  1.0f, -width,  0.0f,  0.0f, -1.0f, length, width, // top-right
-			-length, -1.0f, -width,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-			-length,  1.0f, -width,  0.0f,  0.0f, -1.0f, 0.0f, width, // top-left
+			-length, -height, -width,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+			 length,  height, -width,  0.0f,  0.0f, -1.0f, length, width, // top-right
+			 length, -height, -width,  0.0f,  0.0f, -1.0f, length, 0.0f, // bottom-right         
+			 length,  height, -width,  0.0f,  0.0f, -1.0f, length, width, // top-right
+			-length, -height, -width,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+			-length,  height, -width,  0.0f,  0.0f, -1.0f, 0.0f, width, // top-left
 			// front face
-			-length, -1.0f,  width,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-			 length, -1.0f,  width,  0.0f,  0.0f,  1.0f, length, 0.0f, // bottom-right
-			 length,  1.0f,  width,  0.0f,  0.0f,  1.0f, length, width, // top-right
-			 length,  1.0f,  width,  0.0f,  0.0f,  1.0f, length, width, // top-right
-			-length,  1.0f,  width,  0.0f,  0.0f,  1.0f, 0.0f, width, // top-left
-			-length, -1.0f,  width,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+			-length, -height,  width,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+			 length, -height,  width,  0.0f,  0.0f,  1.0f, length, 0.0f, // bottom-right
+			 length,  height,  width,  0.0f,  0.0f,  1.0f, length, width, // top-right
+			 length,  height,  width,  0.0f,  0.0f,  1.0f, length, width, // top-right
+			-length,  height,  width,  0.0f,  0.0f,  1.0f, 0.0f, width, // top-left
+			-length, -height,  width,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
 			// left face
-			-length,  1.0f,  width, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
-			-length,  1.0f, -width, -1.0f,  0.0f,  0.0f, length, width, // top-left
-			-length, -1.0f, -width, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
-			-length, -1.0f, -width, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
-			-length, -1.0f,  width, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-			-length,  1.0f,  width, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
+			-length,  height,  width, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
+			-length,  height, -width, -1.0f,  0.0f,  0.0f, length, width, // top-left
+			-length, -height, -width, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
+			-length, -height, -width, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
+			-length, -height,  width, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+			-length,  height,  width, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
 			// right face
-			 length,  1.0f,  width,  1.0f,  0.0f,  0.0f, length, 0.0f, // top-left
-			 length, -1.0f, -width,  1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-right
-			 length,  1.0f, -width,  1.0f,  0.0f,  0.0f, length, width, // top-right         
-			 length, -1.0f, -width,  1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-right
-			 length,  1.0f,  width,  1.0f,  0.0f,  0.0f, length, 0.0f, // top-left
-			 length, -1.0f,  width,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+			 length,  height,  width,  1.0f,  0.0f,  0.0f, length, 0.0f, // top-left
+			 length, -height, -width,  1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-right
+			 length,  height, -width,  1.0f,  0.0f,  0.0f, length, width, // top-right         
+			 length, -height, -width,  1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-right
+			 length,  height,  width,  1.0f,  0.0f,  0.0f, length, 0.0f, // top-left
+			 length, -height,  width,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
 			// bottom face
-			-length, -1.0f, -width,  0.0f, -1.0f,  0.0f, 0.0f, width, // top-right
-			 length, -1.0f, -width,  0.0f, -1.0f,  0.0f, length, width, // top-left
-			 length, -1.0f,  width,  0.0f, -1.0f,  0.0f, length, 0.0f, // bottom-left
-			 length, -1.0f,  width,  0.0f, -1.0f,  0.0f, length, 0.0f, // bottom-left
-			-length, -1.0f,  width,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-			-length, -1.0f, -width,  0.0f, -1.0f,  0.0f, 0.0f, width, // top-right
+			-length, -height, -width,  0.0f, -1.0f,  0.0f, 0.0f, width, // top-right
+			 length, -height, -width,  0.0f, -1.0f,  0.0f, length, width, // top-left
+			 length, -height,  width,  0.0f, -1.0f,  0.0f, length, 0.0f, // bottom-left
+			 length, -height,  width,  0.0f, -1.0f,  0.0f, length, 0.0f, // bottom-left
+			-length, -height,  width,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+			-length, -height, -width,  0.0f, -1.0f,  0.0f, 0.0f, width, // top-right
 			// top face
-			-length,  1.0f, -width,  0.0f,  1.0f,  0.0f, 0.0f, width, // top-left
-			 length,  1.0f , width,  0.0f,  1.0f,  0.0f, length, 0.0f, // bottom-right
-			 length,  1.0f, -width,  0.0f,  1.0f,  0.0f, length, width, // top-right     
-			 length,  1.0f,  width,  0.0f,  1.0f,  0.0f, length, 0.0f, // bottom-right
-			-length,  1.0f, -width,  0.0f,  1.0f,  0.0f, 0.0f, width, // top-left
-			-length,  1.0f,  width,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left    
+			-length,  height, -width,  0.0f,  1.0f,  0.0f, 0.0f, width, // top-left
+			 length,  height , width,  0.0f,  1.0f,  0.0f, length, 0.0f, // bottom-right
+			 length,  height, -width,  0.0f,  1.0f,  0.0f, length, width, // top-right     
+			 length,  height,  width,  0.0f,  1.0f,  0.0f, length, 0.0f, // bottom-right
+			-length,  height, -width,  0.0f,  1.0f,  0.0f, 0.0f, width, // top-left
+			-length,  height,  width,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left    
 		};
 
 		glGenVertexArrays(1, &this->VAO);
