@@ -106,7 +106,7 @@ public:
 		glBindVertexArray(0);
 	}
 
-	void DrawBlock(float x, float z)
+	void DrawBlock(float x, float z, int len, bool isRotate = false)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		texture.Bind();
@@ -120,11 +120,39 @@ public:
 		float blockLength = 2.0f;
 		float x_offset = 2.0f * x;
 		float z_offset = 2.0f * z;
+		len = round(len / 2) + 1;
 
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(x_offset, 0.0f, z_offset));
 		this->shader.Use().SetMatrix4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		if (isRotate) {
+			for (int i = 0; i < len; i++) {
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(x_offset, 0.0f, z_offset + (2.0f * i)));
+				this->shader.Use().SetMatrix4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(x_offset, 0.0f, z_offset - (2.0f * i)));
+				this->shader.Use().SetMatrix4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
+		}
+		else {
+			for (int i = 0; i < len; i++) {
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(x_offset + (2.0f * i), 0.0f, z_offset));
+				this->shader.Use().SetMatrix4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(x_offset - (2.0f * i), 0.0f, z_offset));
+				this->shader.Use().SetMatrix4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
+		}
 
 		glBindVertexArray(0);
 	}

@@ -99,28 +99,28 @@ public:
 		plane->DrawBlock(13, 17);
 		plane->DrawBlock(15, 17);
 
-		border->setParam(19.0f, 1.0f);
-		border->DrawBlock(9, 0);
-		border->DrawBlock(10, 19);
+		//border->setParam(19.0f, 1.0f);
+		border->DrawBlock(9, 0, 19);
+		border->DrawBlock(10, 19, 19);
 
-		border->setParam(1.0f, 19.0f);
-		border->DrawBlock(0, 10);
-		border->DrawBlock(19, 9);
+		//border->setParam(1.0f, 19.0f);
+		border->DrawBlock(0, 10, 19, true);
+		border->DrawBlock(19, 9, 19, true);
 
-		border->setParam(11.0f, 1.0f);
-		border->DrawBlock(9, 4);
-		border->DrawBlock(10, 15);
+		//border->setParam(11.0f, 1.0f);
+		border->DrawBlock(9, 4, 11);
+		border->DrawBlock(10, 15, 11);
 
-		border->setParam(1.0f, 11.0f);
-		border->DrawBlock(4, 10);
-		border->DrawBlock(15, 9);
+		//border->setParam(1.0f, 11.0f);
+		border->DrawBlock(4, 10, 11, true);
+		border->DrawBlock(15, 9, 11, true);
 	}
 
-	void reDraw(GLuint *depthMap)
+	void reDraw(string shaderName, GLuint* depthMap)
 	{
-		plane->shader = ResourceManager::GetShader("ShadowShader");
+		plane->shader = ResourceManager::GetShader(shaderName);
 		plane->depthMap = depthMap;
-		border->shader = ResourceManager::GetShader("ShadowShader");
+		border->shader = ResourceManager::GetShader(shaderName);
 		border->depthMap = depthMap;
 		for (int i = 0; i < 20; i++) {
 			for (int j = 0; j < 20; j++) {
@@ -130,11 +130,11 @@ public:
 				else if (sceneMatrix[i][j] != 0) {
 					if (sceneMatrix[i][j] > 0) {
 						border->setParam(abs(sceneMatrix[i][j]), 1.0f);
-						border->DrawBlock(i, j);
+						//border->DrawBlock(i, j);
 					}
 					else {
 						border->setParam(1.0f, abs(sceneMatrix[i][j]));
-						border->DrawBlock(i, j);
+						//border->DrawBlock(i, j);
 					}
 				}
 			}
