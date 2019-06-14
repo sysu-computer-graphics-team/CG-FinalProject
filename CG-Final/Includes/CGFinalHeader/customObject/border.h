@@ -37,8 +37,6 @@ public:
 
 	void initRenderData()
 	{
-		std::cout << "BorderObject initRenderData" << std::endl;
-
 		// Configure VAO/VBO
 		GLuint VBO;
 		float borderVertices[] = {
@@ -57,12 +55,12 @@ public:
 			-length,  1.0f,  width,  0.0f,  0.0f,  1.0f, 0.0f, width, // top-left
 			-length, -1.0f,  width,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
 			// left face
-			-length,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
-			-length,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, length, width, // top-left
-			-length, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
-			-length, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
-			-length, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-			-length,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
+			-length,  1.0f,  width, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
+			-length,  1.0f, -width, -1.0f,  0.0f,  0.0f, length, width, // top-left
+			-length, -1.0f, -width, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
+			-length, -1.0f, -width, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
+			-length, -1.0f,  width, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+			-length,  1.0f,  width, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
 			// right face
 			 length,  1.0f,  width,  1.0f,  0.0f,  0.0f, length, 0.0f, // top-left
 			 length, -1.0f, -width,  1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-right
@@ -112,8 +110,8 @@ public:
 		glBindVertexArray(VAO);
 
 		float blockLength = 2.0f;
-		float x_offset = length * 2.0f * x;
-		float z_offset = length * 2.0f * z;
+		float x_offset = 2.0f * x;
+		float z_offset = 2.0f * z;
 
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(x_offset, 0.0f, z_offset));

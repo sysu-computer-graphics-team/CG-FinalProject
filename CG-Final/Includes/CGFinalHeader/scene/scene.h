@@ -64,9 +64,6 @@ public:
 
 	void Draw()
 	{
-		/*plane->DrawBlock(0, 0);
-		plane->DrawBlock(1, 0);
-		border->DrawBlock(2, 0);*/
 		plane->setParam(3.0f, 3.0f);
 		for (int i = 0; i < 20; i++) {
 			for (int j = 0; j < 20; j++) {
