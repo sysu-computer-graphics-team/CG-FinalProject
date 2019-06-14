@@ -63,27 +63,57 @@ public:
 		border = new Border(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("wood"));
 	}
 
-	void Draw()
+	void Draw(string shaderName, GLuint* depthMap)
 	{
-		plane->shader = ResourceManager::GetShader("DepthShader");
-		border->shader = ResourceManager::GetShader("DepthShader");
-		for (int i = 0; i < 20; i++) {
-			for (int j = 0; j < 20; j++) {
-				if (sceneMatrix[i][j] == 1) {
-					plane->DrawBlock(i, j);
-				}
-				else if (sceneMatrix[i][j] != 0) {
-					if (sceneMatrix[i][j] > 0) {
-						border->setParam(abs(sceneMatrix[i][j]), 1.0f);
-						border->DrawBlock(i, j);
-					}
-					else {
-						border->setParam(1.0f, abs(sceneMatrix[i][j]));
-						border->DrawBlock(i, j);
-					}
-				}
-			}
-		}
+		plane->shader = ResourceManager::GetShader(shaderName);
+		plane->depthMap = depthMap;
+		border->shader = ResourceManager::GetShader(shaderName);
+		border->depthMap = depthMap;
+
+		plane->DrawBlock(2, 2);
+		plane->DrawBlock(2, 5);
+		plane->DrawBlock(2, 7);
+		plane->DrawBlock(2, 9);
+		plane->DrawBlock(2, 11);
+		plane->DrawBlock(2, 13);
+		plane->DrawBlock(2, 15);
+		plane->DrawBlock(2, 17);
+		plane->DrawBlock(17, 2);
+		plane->DrawBlock(17, 5);
+		plane->DrawBlock(17, 7);
+		plane->DrawBlock(17, 9);
+		plane->DrawBlock(17, 11);
+		plane->DrawBlock(17, 13);
+		plane->DrawBlock(17, 15);
+		plane->DrawBlock(17, 17);
+		plane->DrawBlock(5, 2);
+		plane->DrawBlock(7, 2);
+		plane->DrawBlock(9, 2);
+		plane->DrawBlock(11, 2);
+		plane->DrawBlock(13, 2);
+		plane->DrawBlock(15, 2);
+		plane->DrawBlock(5, 17);
+		plane->DrawBlock(7, 17);
+		plane->DrawBlock(9, 17);
+		plane->DrawBlock(11, 17);
+		plane->DrawBlock(13, 17);
+		plane->DrawBlock(15, 17);
+
+		border->setParam(19.0f, 1.0f);
+		border->DrawBlock(9, 0);
+		border->DrawBlock(10, 19);
+
+		border->setParam(1.0f, 19.0f);
+		border->DrawBlock(0, 10);
+		border->DrawBlock(19, 9);
+
+		border->setParam(11.0f, 1.0f);
+		border->DrawBlock(9, 4);
+		border->DrawBlock(10, 15);
+
+		border->setParam(1.0f, 11.0f);
+		border->DrawBlock(4, 10);
+		border->DrawBlock(15, 9);
 	}
 
 	void reDraw(GLuint *depthMap)
@@ -106,6 +136,24 @@ public:
 						border->setParam(1.0f, abs(sceneMatrix[i][j]));
 						border->DrawBlock(i, j);
 					}
+				}
+			}
+		}
+	}
+
+	void DrawTest(string shaderName, GLuint* depthMap)
+	{
+		plane->shader = ResourceManager::GetShader(shaderName);
+		plane->depthMap = depthMap;
+		border->shader = ResourceManager::GetShader(shaderName);
+		border->depthMap = depthMap;
+		/*plane->DrawBlock(0, 0);
+		plane->DrawBlock(1, 0);
+		plane->DrawBlock(0, 1);*/
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
+				if (sceneMatrix[i][j] == 1) {
+					plane->DrawBlock(i, j);
 				}
 			}
 		}

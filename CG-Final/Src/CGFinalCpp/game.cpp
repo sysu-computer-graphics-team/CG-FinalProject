@@ -184,7 +184,7 @@ void Game::Render()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	// render scene
 	// for custom object, model matrix already configure in Draw() function
-	scene->Draw();
+	scene->Draw("DepthShader", nullptr);
 	// for model object, model matrix do not configure in Draw() function, we need to configure model matrix!
 	fiatCar->shader = ResourceManager::GetShader("DepthShader");
 	glm::mat4 model = glm::mat4(1.0f);
@@ -223,7 +223,7 @@ void Game::Render()
 	ResourceManager::GetShader("ShadowShader").Use().SetVector3f("viewPos", this->camera->Position);
 	ResourceManager::GetShader("ShadowShader").Use().SetVector3f("lightPos", lightPos);
 	// Custom object that use ShadowShader
-	scene->reDraw(&this->depthMap);
+	scene->Draw("ShadowShader", &this->depthMap);
 
 	// BasicModelShader
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("view", this->camera->GetViewMatrix());
