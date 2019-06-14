@@ -46,6 +46,7 @@ public:
 	void ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3 frontOfCar, glm::vec3 upOfCar, float deltaTime);
 	void Update();
 	void Render();
+	bool IsConflict();
 	glm::vec3 getFrontOfCar();
 };
 

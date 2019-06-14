@@ -30,6 +30,10 @@ glm::vec3 lightPos(0.0001f, 10.0f, 0.0f);
 glm::vec3 carShift(0.0f, 0.0f, 0.0f);
 
 const bool renderSkybox = false;
+//用来估算车子的大小，若要精细一点的话，因为carPos好像是在车头，所以可能需要四个变量：AddCarX/Y & MinusCarX/Y
+const unsigned int carSizeX = 1, carSizeY = 1;
+
+float timeCounter = -1.5708f;
 
 // shadow size
 const unsigned int SHADOW_WIDTH = 1280, SHADOW_HEIGHT = 1280;
@@ -64,6 +68,7 @@ void Game::Init()
 	ResourceManager::LoadShader("../Resources/shaders/shadow_mapping.vs", "../Resources/shaders/shadow_mapping.fs", nullptr, "ShadowShader");
 	ResourceManager::LoadShader("../Resources/shaders/lamp.vs", "../Resources/shaders/lamp.fs", nullptr, "LampShader");
 	ResourceManager::LoadShader("../Resources/shaders/textShader.vs", "../Resources/shaders/textShader.fs", nullptr, "textShader");
+	ResourceManager::LoadShader("../Resources/shaders/explode.vs", "../Resources/shaders/explode.fs", "../Resources/shaders/explode.gs", "explodeShader");
 	
 	// Load textures
 	ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
@@ -203,6 +208,7 @@ void Game::Render()
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
 	// here should pass a bool value to Mesh Draw, if is depthshader, then do not configure texture
+	// if (!IsConflict())
 	fiatCar->Draw(depthMap);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -263,6 +269,17 @@ void Game::Render()
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
 	fiatCar->shader = ResourceManager::GetShader("BasicModelShader");
+	if (IsConflict())
+	{
+		ResourceManager::GetShader("explodeShader").Use().SetMatrix4("model", model);
+		ResourceManager::GetShader("explodeShader").Use().SetMatrix4("view", this->camera->GetViewMatrix());
+		ResourceManager::GetShader("explodeShader").Use().SetMatrix4("projection", projection);
+		ResourceManager::GetShader("explodeShader").Use().SetFloat("time", timeCounter);
+		timeCounter = (timeCounter + 0.001f) <= 1.5f ? (timeCounter + 0.001f) : 1.5f;
+		// cout << timeCounter << endl;
+		// cout << glfwGetTime() << endl;
+		fiatCar->shader = ResourceManager::GetShader("explodeShader");
+	}
 	fiatCar->Draw(depthMap);
 
 	// Skybox Shader
@@ -278,6 +295,15 @@ void Game::Render()
 	ResourceManager::GetShader("textShader").Use().SetMatrix4("projection", projection);
 	mytext.RenderText(ResourceManager::GetShader("textShader"), str, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 
+}
+
+bool Game::IsConflict() {
+	// std::cout << carPos.x << " " << carPos.y << " " << carPos.z << endl;
+    bool collisionX = abs(carPos.x + carSizeX) >= 10 || abs(carPos.x - carSizeX) >= 10;
+    bool collisionY = abs(carPos.z + carSizeY) >= 10 || abs(carPos.z - carSizeY) >= 10;
+	// cout << collisionX << " " << collisionY << endl;
+    // Collision only if on both axes
+    return collisionX || collisionY;
 }
 
 glm::vec3 Game::getFrontOfCar() {
