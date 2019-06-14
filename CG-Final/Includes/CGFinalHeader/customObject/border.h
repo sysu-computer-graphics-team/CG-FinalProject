@@ -14,6 +14,8 @@ public:
 	// Render state
 	GLuint VAO;
 	Texture2D texture;
+	float length = 1.0f;
+	float width = 1.0f;
 
 	Border(Shader &shader, Texture2D &texture)
 		: CustomObject(shader), texture(texture)
@@ -26,6 +28,13 @@ public:
 		glDeleteVertexArrays(1, &this->VAO);
 	}
 
+	void setParam(int l, int w)
+	{
+		length = l;
+		width = w;
+		this->initRenderData();
+	}
+
 	void initRenderData()
 	{
 		std::cout << "BorderObject initRenderData" << std::endl;
@@ -34,47 +43,47 @@ public:
 		GLuint VBO;
 		float borderVertices[] = {
 			// back face
-			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-			 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-			 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-			 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-			-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+			-length, -1.0f, -width,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+			 length,  1.0f, -width,  0.0f,  0.0f, -1.0f, length, width, // top-right
+			 length, -1.0f, -width,  0.0f,  0.0f, -1.0f, length, 0.0f, // bottom-right         
+			 length,  1.0f, -width,  0.0f,  0.0f, -1.0f, length, width, // top-right
+			-length, -1.0f, -width,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+			-length,  1.0f, -width,  0.0f,  0.0f, -1.0f, 0.0f, width, // top-left
 			// front face
-			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-			 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
-			 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-			 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-			-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+			-length, -1.0f,  width,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+			 length, -1.0f,  width,  0.0f,  0.0f,  1.0f, length, 0.0f, // bottom-right
+			 length,  1.0f,  width,  0.0f,  0.0f,  1.0f, length, width, // top-right
+			 length,  1.0f,  width,  0.0f,  0.0f,  1.0f, length, width, // top-right
+			-length,  1.0f,  width,  0.0f,  0.0f,  1.0f, 0.0f, width, // top-left
+			-length, -1.0f,  width,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
 			// left face
-			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-			-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-			-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+			-length,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
+			-length,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, length, width, // top-left
+			-length, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
+			-length, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-left
+			-length, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+			-length,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, length, 0.0f, // top-right
 			// right face
-			 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-			 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-			 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
-			 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-			 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-			 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+			 length,  1.0f,  width,  1.0f,  0.0f,  0.0f, length, 0.0f, // top-left
+			 length, -1.0f, -width,  1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-right
+			 length,  1.0f, -width,  1.0f,  0.0f,  0.0f, length, width, // top-right         
+			 length, -1.0f, -width,  1.0f,  0.0f,  0.0f, 0.0f, width, // bottom-right
+			 length,  1.0f,  width,  1.0f,  0.0f,  0.0f, length, 0.0f, // top-left
+			 length, -1.0f,  width,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
 			// bottom face
-			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-			 1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-			 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-			 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-			-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+			-length, -1.0f, -width,  0.0f, -1.0f,  0.0f, 0.0f, width, // top-right
+			 length, -1.0f, -width,  0.0f, -1.0f,  0.0f, length, width, // top-left
+			 length, -1.0f,  width,  0.0f, -1.0f,  0.0f, length, 0.0f, // bottom-left
+			 length, -1.0f,  width,  0.0f, -1.0f,  0.0f, length, 0.0f, // bottom-left
+			-length, -1.0f,  width,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+			-length, -1.0f, -width,  0.0f, -1.0f,  0.0f, 0.0f, width, // top-right
 			// top face
-			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-			 1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-			 1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-			 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-			-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left    
+			-length,  1.0f, -width,  0.0f,  1.0f,  0.0f, 0.0f, width, // top-left
+			 length,  1.0f , width,  0.0f,  1.0f,  0.0f, length, 0.0f, // bottom-right
+			 length,  1.0f, -width,  0.0f,  1.0f,  0.0f, length, width, // top-right     
+			 length,  1.0f,  width,  0.0f,  1.0f,  0.0f, length, 0.0f, // bottom-right
+			-length,  1.0f, -width,  0.0f,  1.0f,  0.0f, 0.0f, width, // top-left
+			-length,  1.0f,  width,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left    
 		};
 
 		glGenVertexArrays(1, &this->VAO);
@@ -93,6 +102,24 @@ public:
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
+	void DrawBlock(float x, float z)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		texture.Bind();
+		glBindVertexArray(VAO);
+
+		float blockLength = 2.0f;
+		float x_offset = length * 2.0f * x;
+		float z_offset = length * 2.0f * z;
+
+		glm::mat4 model(1.0f);
+		model = glm::translate(model, glm::vec3(x_offset, 0.0f, z_offset));
+		this->shader.Use().SetMatrix4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 		glBindVertexArray(0);
 	}
 

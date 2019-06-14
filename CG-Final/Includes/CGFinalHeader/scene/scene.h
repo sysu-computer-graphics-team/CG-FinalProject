@@ -15,8 +15,30 @@ public:
 	// Custom Object
 	Plane* plane;
 	Border* border;
-	float length = 13.0f;
-	float width = 3.0f;
+
+	// 1 for plane, 2 for border
+	int sceneMatrix[20][20] = {
+	{0,0,0,0,0,0,0,0,0,0,-19,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,-11,0,0,0,0,0,0,0,0,0},
+	{0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+	{19,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,11,0,0,0,19},
+	{0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+	{0,0,0,0,0,0,0,0,0,-11,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,-19,0,0,0,0,0,0,0,0,0,0}
+	};
 
 	Scene()
 	{
@@ -38,14 +60,31 @@ public:
 		plane = new Plane(ResourceManager::GetShader("BasicShader"), ResourceManager::GetTexture("container2_specular"));
 		// border
 		border = new Border(ResourceManager::GetShader("BasicShader"), ResourceManager::GetTexture("wood"));
-
 	}
 
 	void Draw()
 	{
-		plane->DrawSquare(0, 0);
-		plane->DrawSquare(1, 0);
-		border->Draw();
+		/*plane->DrawBlock(0, 0);
+		plane->DrawBlock(1, 0);
+		border->DrawBlock(2, 0);*/
+		plane->setParam(3.0f, 3.0f);
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
+				if (sceneMatrix[i][j] == 1) {
+					plane->DrawBlock(i, j);
+				}
+				else if (sceneMatrix[i][j] != 0) {
+					if (sceneMatrix[i][j] > 0) {
+						border->setParam(abs(sceneMatrix[i][j]), 1.0f);
+						border->DrawBlock(i, j);
+					}
+					else {
+						border->setParam(1.0f, abs(sceneMatrix[i][j]));
+						border->DrawBlock(i, j);
+					}
+				}
+			}
+		}
 	}
 };
 

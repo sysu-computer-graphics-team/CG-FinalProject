@@ -14,8 +14,8 @@ public:
 	// Render state
 	GLuint VAO;
 	Texture2D texture;
-	float length = 3.0f;
-	float width = 3.0f;
+	float length = 1.0f;
+	float width = 1.0f;
 
 	Plane(Shader &shader, Texture2D &texture)
 		: CustomObject(shader), texture(texture)
@@ -26,6 +26,13 @@ public:
 	~Plane()
 	{
 		glDeleteVertexArrays(1, &this->VAO);
+	}
+
+	void setParam(int l, int w)
+	{
+		length = l;
+		width = w;
+		this->initRenderData();
 	}
 
 	void initRenderData()
@@ -62,15 +69,15 @@ public:
 		glBindVertexArray(0);
 	}
 
-	void DrawSquare(float x, float z)
+	void DrawBlock(float x, float z)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		texture.Bind();
 		glBindVertexArray(VAO);
 
 		float blockLength = 2.0f;
-		float x_offset = length * 2.0f * x;
-		float z_offset = length * 2.0f * z;
+		float x_offset = 2.0f * x;
+		float z_offset = 2.0f * z;
 
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(x_offset, 0.0f, z_offset));
