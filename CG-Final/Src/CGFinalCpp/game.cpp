@@ -17,6 +17,9 @@ Scene* scene;
 
 //ModelObject *nanosuit;
 ModelObject *fiatCar;
+ModelObject *oldHouse;
+
+bool renderOldHouseFlag = true;
 
 // Skybox
 Skybox* skybox;
@@ -28,6 +31,10 @@ glm::vec3 lightPos(0.0001f, 10.0f, 0.0f);
 glm::vec3 carShift(0.0f, 0.0f, 0.0f);
 
 const bool renderSkybox = true;
+//用来估算车子的大小，若要精细一点的话，因为carPos好像是在车头，所以可能需要四个变量：AddCarX/Y & MinusCarX/Y
+const unsigned int carSizeX = 1, carSizeY = 1;
+
+float timeCounter = -1.5708f;
 
 // shadow size
 const unsigned int SHADOW_WIDTH = 1280, SHADOW_HEIGHT = 1280;
@@ -45,6 +52,7 @@ Game::~Game()
 	delete scene;
 	delete fiatCar;
 	delete skybox;
+	delete oldHouse;
 }
 
 
@@ -61,19 +69,20 @@ void Game::Init()
 	ResourceManager::LoadShader("../Resources/shaders/shadow_mapping.vs", "../Resources/shaders/shadow_mapping.fs", nullptr, "ShadowShader");
 	ResourceManager::LoadShader("../Resources/shaders/lamp.vs", "../Resources/shaders/lamp.fs", nullptr, "LampShader");
 	ResourceManager::LoadShader("../Resources/shaders/textShader.vs", "../Resources/shaders/textShader.fs", nullptr, "textShader");
+	ResourceManager::LoadShader("../Resources/shaders/explode.vs", "../Resources/shaders/explode.fs", "../Resources/shaders/explode.gs", "explodeShader");
 	
 	// Load textures
-	ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
-	ResourceManager::LoadTexture("../Resources/textures/block_solid.png", GL_TRUE, "block_solid");
-	ResourceManager::LoadTexture("../Resources/textures/container2.png", GL_TRUE, "container2");
-	ResourceManager::LoadTexture("../Resources/textures/container2_specular.png", GL_TRUE, "container2_specular");
-	ResourceManager::LoadTexture("../Resources/textures/brickwall.jpg", GL_TRUE, "brickwall");
+	// ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
+	// ResourceManager::LoadTexture("../Resources/textures/block_solid.png", GL_TRUE, "block_solid");
+	// ResourceManager::LoadTexture("../Resources/textures/container2.png", GL_TRUE, "container2");
+	// ResourceManager::LoadTexture("../Resources/textures/container2_specular.png", GL_TRUE, "container2_specular");
+	// ResourceManager::LoadTexture("../Resources/textures/brickwall.jpg", GL_TRUE, "brickwall");
 	ResourceManager::LoadTexture("../Resources/textures/wood.png", GL_TRUE, "wood");
-	ResourceManager::LoadTexture("../Resources/textures/awesomeface.png", GL_TRUE, "awesomeface");
-	ResourceManager::LoadTexture("../Resources/textures/metal.png", GL_TRUE, "metal");
-	ResourceManager::LoadTexture("../Resources/textures/window.png", GL_TRUE, "window");
-	ResourceManager::LoadTexture("../Resources/textures/snake_skin.jpg", GL_TRUE, "snake_skin");
-	ResourceManager::LoadTexture("../Resources/textures/animal_skin_0.jpg", GL_TRUE, "animal_skin_0");
+	// ResourceManager::LoadTexture("../Resources/textures/awesomeface.png", GL_TRUE, "awesomeface");
+	// ResourceManager::LoadTexture("../Resources/textures/metal.png", GL_TRUE, "metal");
+	// ResourceManager::LoadTexture("../Resources/textures/window.png", GL_TRUE, "window");
+	// ResourceManager::LoadTexture("../Resources/textures/snake_skin.jpg", GL_TRUE, "snake_skin");
+	// ResourceManager::LoadTexture("../Resources/textures/animal_skin_0.jpg", GL_TRUE, "animal_skin_0");
 	/* skybox */
 	vector<std::string> faces{
 		"../Resources/textures/skybox/right.jpg",
@@ -88,6 +97,7 @@ void Game::Init()
 	// Load models
 	// ResourceManager::LoadModel("../Resources/objects/nanosuit/nanosuit.obj", "nanosuit");
 	ResourceManager::LoadModel("../Resources/objects/fiat/Fiat_127_A_1971.obj", "fiatCar");
+	ResourceManager::LoadModel("../Resources/objects/Big_Old_House/Big_Old_House.obj", "oldHouse");
 
 	// New Scene Object
 	scene = new Scene();
@@ -101,6 +111,7 @@ void Game::Init()
 	// nanosuit = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("nanosuit"));
 	// fiatCar
 	fiatCar = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("fiatCar"));
+	oldHouse = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("oldHouse"));
 
 	// shadow mapping configure
 	glGenFramebuffers(1, &this->depthMapFBO);
@@ -194,7 +205,13 @@ void Game::Render()
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
 	// here should pass a bool value to Mesh Draw, if is depthshader, then do not configure texture
+	// if (!IsConflict())
 	fiatCar->Draw(depthMap);
+	model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
+	if (renderOldHouseFlag)
+		oldHouse->Draw(depthMap);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -251,6 +268,27 @@ void Game::Render()
 	fiatCar->shader = ResourceManager::GetShader("BasicModelShader");
 	fiatCar->Draw(depthMap);
 
+	model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
+	oldHouse->shader = ResourceManager::GetShader("BasicModelShader");
+	if (IsConflict())
+	{
+		ResourceManager::GetShader("explodeShader").Use().SetMatrix4("model", model);
+		ResourceManager::GetShader("explodeShader").Use().SetMatrix4("view", view);
+		ResourceManager::GetShader("explodeShader").Use().SetMatrix4("projection", projection);
+		ResourceManager::GetShader("explodeShader").Use().SetFloat("time", timeCounter);
+		timeCounter = (timeCounter + 0.015f) <= 1.5f ? (timeCounter + 0.015f) : 1.5f;
+		if (timeCounter >= 1.5f)
+			renderOldHouseFlag = false;
+		// cout << timeCounter << endl;
+		// cout << glfwGetTime() << endl;
+		oldHouse->shader = ResourceManager::GetShader("explodeShader");
+	}
+	
+	if (renderOldHouseFlag)
+		oldHouse->Draw(depthMap);
+
 	// Skybox Shader
 	ResourceManager::GetShader("skyShader").Use().SetMatrix4("view",
 		glm::mat4(glm::mat3(this->camera->GetViewMatrix())));
@@ -264,6 +302,15 @@ void Game::Render()
 	ResourceManager::GetShader("textShader").Use().SetMatrix4("projection", projection);
 	mytext.RenderText(ResourceManager::GetShader("textShader"), str, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 
+}
+
+bool Game::IsConflict() {
+	// std::cout << carPos.x << " " << carPos.y << " " << carPos.z << endl;
+    bool collisionX = abs(carPos.x + carSizeX) <= 1 || abs(carPos.x - carSizeX) <= 1;
+    bool collisionY = abs(carPos.z + carSizeY) <= 1 || abs(carPos.z - carSizeY) <= 1;
+	// cout << collisionX << " " << collisionY << endl;
+    // Collision only if on both axes
+    return collisionX && collisionY;
 }
 
 glm::vec3 Game::getFrontOfCar() {

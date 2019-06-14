@@ -34,7 +34,7 @@ public:
 	float Yaw = -90;
 	myText mytext;
 	std::string str;
-	glm::vec3 carPos = glm::vec3(0, 0, 0);
+	glm::vec3 carPos = glm::vec3(5, 0, 5);
 	glm::vec3 axis = glm::vec3(0,1,0);
 	glm::vec3 carfront = glm::vec3(0.0f, 0.0f, -1.0f);
 	// Constructor/Destructor
@@ -46,6 +46,7 @@ public:
 	void ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3 frontOfCar, glm::vec3 upOfCar, float deltaTime);
 	void Update();
 	void Render();
+	bool IsConflict();
 	glm::vec3 getFrontOfCar();
 };
 

@@ -16,15 +16,15 @@ uniform vec3 viewPos;
 
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
-    // Ö´ÐÐÍ¸ÊÓ·¨
+    // æ‰§è¡Œé€è§†æ³•
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    // ±ä»»µ½[0,1]µÄ·¶Î§
+    // å˜æ¢åˆ°[0,1]çš„èŒƒå›´
     projCoords = projCoords * 0.5 + 0.5;
-    // È¡µÃ×î½üµãµÄÉî¶È(Ê¹ÓÃ[0,1]·¶Î§ÏÂµÄfragPosLightµ±×ø±ê)
+    // å–å¾—æœ€è¿‘ç‚¹çš„æ·±åº¦(ä½¿ç”¨[0,1]èŒƒå›´ä¸‹çš„fragPosLightå½“åæ ‡)
     float closestDepth = texture(shadowMap, projCoords.xy).r; 
-    // È¡µÃµ±Ç°Æ¬ÔªÔÚ¹âÔ´ÊÓ½ÇÏÂµÄÉî¶È
+    // å–å¾—å½“å‰ç‰‡å…ƒåœ¨å…‰æºè§†è§’ä¸‹çš„æ·±åº¦
     float currentDepth = projCoords.z;
-	// ¼ì²éµ±Ç°Æ¬ÔªÊÇ·ñÔÚÒõÓ°ÖÐ
+	// æ£€æŸ¥å½“å‰ç‰‡å…ƒæ˜¯å¦åœ¨é˜´å½±ä¸­
 	//float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
 
     // calculate bias (based on depth map resolution and slope)

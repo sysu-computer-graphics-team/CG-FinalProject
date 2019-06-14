@@ -196,7 +196,7 @@ public:
 		glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 4.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(3.0f, 4.0f, 0.0f));
 		this->shader.Use().SetMatrix4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
