@@ -301,7 +301,7 @@ void Game::Render()
 	projection = glm::ortho(0.0f, static_cast<GLfloat>(Width), 0.0f, static_cast<GLfloat>(Height));
 	ResourceManager::GetShader("textShader").Use().SetMatrix4("projection", projection);
 	mytext.RenderText(ResourceManager::GetShader("textShader"), str, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-
+	mytext.RenderText(ResourceManager::GetShader("textShader"), "press C to change camera", 425.0f, 25.0f, 0.5f, glm::vec3(0.0, 0.0f, 0.8f));
 }
 
 bool Game::IsConflict() {

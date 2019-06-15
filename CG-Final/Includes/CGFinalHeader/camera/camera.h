@@ -45,7 +45,7 @@ public:
 	float MovementSpeed;
 	float MouseSensitivity;
 	float Zoom;
-
+	bool freecamera;
 	// Constructor with vectors
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 	{
@@ -98,6 +98,28 @@ public:
 		// std::cout << "Position: (" << Position.x << ", " << Position.y << ", " << Position.z << ")" << std::endl;
 	}
 
+	void ProcessKeyboard(Camera_Movement direction, float deltaTime)
+	{
+		float velocity = MovementSpeed * deltaTime;
+		glm::vec3 front = glm::normalize(glm::vec3(Front.x, 0, Front.z));
+		if (direction == FORWARD)
+			Position += Front * velocity;
+		if (direction == BACKWARD)
+			Position -= Front * velocity;
+		if (direction == LEFT)
+			Position -= Right * velocity;
+		if (direction == RIGHT)
+			Position += Right * velocity;
+
+		// make sure the user stays at the ground level
+
+		// Position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
+
+
+
+		// std::cout << "Position: (" << Position.x << ", " << Position.y << ", " << Position.z << ")" << std::endl;
+
+	}
 	void setPostion(glm::vec3 pos) {
 		Position = pos;
 	}
