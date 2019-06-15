@@ -77,12 +77,12 @@ void main()
 	vec3 specular = pointlight.specular * spec * texture(texture_specular1, TexCoords).rgb;
 
 	// attenuation
-	float distance = length(pointlight.position - FragPos);
-	float attenuation = 1.0 / (pointlight.constant + pointlight.linear * distance + pointlight.quadratic * distance * distance);
+	// float distance = length(pointlight.position - FragPos);
+	// float attenuation = 1.0 / (pointlight.constant + pointlight.linear * distance + pointlight.quadratic * distance * distance);
 
-	ambient *= attenuation;
-	diffuse *= attenuation;
-	specular *= attenuation;
+	// ambient *= attenuation;
+	// diffuse *= attenuation;
+	// specular *= attenuation;
 
 	float shadow = ShadowCalculation(FragPosLightSpace);
 	vec3 result = ambient + (1 - shadow) * (diffuse + specular);

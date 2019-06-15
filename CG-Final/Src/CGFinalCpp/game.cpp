@@ -184,7 +184,7 @@ void Game::Render()
 	glm::mat4 lightProjection, lightView;
 	glm::mat4 lightSpaceMatrix;
 	// default use ortho projection
-	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 30.0f);
+	lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, 0.1f, 30.0f);
 	lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	lightSpaceMatrix = lightProjection * lightView;
 	// reander scane from light's point of view
