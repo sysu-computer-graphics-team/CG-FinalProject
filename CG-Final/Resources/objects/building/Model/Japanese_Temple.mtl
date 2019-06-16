@@ -1,0 +1,32 @@
+# Blender MTL File: 'Japanese_Temple8.blend'
+# Material Count: 2
+
+newmtl Japanese_Shrine_Mat
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_MetallicSmoothness.png
+map_Kd Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_AlbedoTransparency.png
+map_Ks Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_AO.png
+map_d Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_Normal.png
+map_bump Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_Roughness.png
+   
+newmtl Japanese_Shrine_Mat_NONE
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Ka Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_MetallicSmoothness.png
+map_Kd Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_AlbedoTransparency.png
+map_Ks Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_AO.png
+map_d Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_Normal.png
+map_bump Textures\Japanese_Temple_Paint2_Japanese_Shrine_Mat_Roughness.png

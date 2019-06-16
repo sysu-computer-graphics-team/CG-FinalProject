@@ -44,6 +44,7 @@
     <ClInclude Include="Includes\CGFinalHeader\skybox\skybox.h" />
     <ClInclude Include="Includes\CGFinalHeader\texture\texture.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Includes\CGFinalHeader\customObject\windowsObject.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -8,14 +8,14 @@
 #include <CGFinalHeader/customObject/custom_object.h>
 #include <CGFinalHeader/customObject/border.h>
 #include <CGFinalHeader/customObject/plane.h>
-
+#include <CGFinalHeader/customObject/windowsObject.h>
 class Scene
 {
 public:
 	// Custom Object
 	Plane* plane;
 	Border* border;
-
+	windowsObject* winobj;
 	// 1 for plane, big number for border
 	int sceneMatrix[20][20] = {
 	{0,0,0,0,0,0,0,0,0,0,-19,0,0,0,0,0,0,0,0,0},
@@ -54,13 +54,13 @@ public:
 	void initRenderData()
 	{
 		std::cout << "Scene initRenderData" << std::endl;
-
 		// New Scene Object
 		// plane
 		plane = new Plane(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("wood"));
 		plane->setParam(3.0f, 3.0f);
 		// border
 		border = new Border(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("wood"));
+		winobj = new windowsObject(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("window"));
 	}
 
 	void Draw(string shaderName, GLuint* depthMap)
@@ -69,6 +69,8 @@ public:
 		plane->depthMap = depthMap;
 		border->shader = ResourceManager::GetShader(shaderName);
 		border->depthMap = depthMap;
+		winobj->shader = ResourceManager::GetShader(shaderName);
+		winobj->depthMap = depthMap;
 
 		plane->DrawBlock(2, 2);
 		plane->DrawBlock(2, 5);

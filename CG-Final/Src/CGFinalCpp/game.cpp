@@ -18,8 +18,9 @@ Scene* scene;
 //ModelObject *nanosuit;
 ModelObject *fiatCar;
 ModelObject *oldHouse;
-
-bool renderOldHouseFlag = true;
+ModelObject *temple;
+ModelObject *tree;
+bool renderTempleFlag = true;
 
 // Skybox
 Skybox* skybox;
@@ -53,6 +54,8 @@ Game::~Game()
 	delete fiatCar;
 	delete skybox;
 	delete oldHouse;
+	delete tree;
+	delete temple;
 }
 
 
@@ -70,7 +73,7 @@ void Game::Init()
 	ResourceManager::LoadShader("../Resources/shaders/lamp.vs", "../Resources/shaders/lamp.fs", nullptr, "LampShader");
 	ResourceManager::LoadShader("../Resources/shaders/textShader.vs", "../Resources/shaders/textShader.fs", nullptr, "textShader");
 	ResourceManager::LoadShader("../Resources/shaders/explode.vs", "../Resources/shaders/explode.fs", "../Resources/shaders/explode.gs", "explodeShader");
-	
+
 	// Load textures
 	// ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
 	// ResourceManager::LoadTexture("../Resources/textures/block_solid.png", GL_TRUE, "block_solid");
@@ -78,6 +81,7 @@ void Game::Init()
 	// ResourceManager::LoadTexture("../Resources/textures/container2_specular.png", GL_TRUE, "container2_specular");
 	// ResourceManager::LoadTexture("../Resources/textures/brickwall.jpg", GL_TRUE, "brickwall");
 	ResourceManager::LoadTexture("../Resources/textures/wood.png", GL_TRUE, "wood");
+	ResourceManager::LoadTexture("../Resources/textures/window.png", GL_TRUE, "window");
 	// ResourceManager::LoadTexture("../Resources/textures/awesomeface.png", GL_TRUE, "awesomeface");
 	// ResourceManager::LoadTexture("../Resources/textures/metal.png", GL_TRUE, "metal");
 	// ResourceManager::LoadTexture("../Resources/textures/window.png", GL_TRUE, "window");
@@ -98,7 +102,8 @@ void Game::Init()
 	// ResourceManager::LoadModel("../Resources/objects/nanosuit/nanosuit.obj", "nanosuit");
 	ResourceManager::LoadModel("../Resources/objects/fiat/Fiat_127_A_1971.obj", "fiatCar");
 	ResourceManager::LoadModel("../Resources/objects/Big_Old_House/Big_Old_House.obj", "oldHouse");
-
+	ResourceManager::LoadModel("../Resources/objects/building/Model/Japanese_Temple.obj", "temple");
+	ResourceManager::LoadModel("../Resources/objects/tree/tree.obj", "tree");
 	// New Scene Object
 	scene = new Scene();
 	// lamp
@@ -112,7 +117,8 @@ void Game::Init()
 	// fiatCar
 	fiatCar = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("fiatCar"));
 	oldHouse = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("oldHouse"));
-
+	temple = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("temple"));
+	tree = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("tree"));
 	// shadow mapping configure
 	glGenFramebuffers(1, &this->depthMapFBO);
 	glGenTextures(1, &this->depthMap);
@@ -138,7 +144,15 @@ void Game::Init()
 
 void Game::Update()
 {
-	carPos += carShift;
+	glm::vec3 position = carPos + carShift;
+	float size = 39;
+	float road = 6;
+	float border = 1;
+	if (position.x > border && position.z > border && position.x < (size - border) && position.z < (size - border)) {
+		if (position.x < road || position.z<road || position.x >(size - road) || position.z >(size - road))
+			carPos = position;
+	}
+
 	carShift = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
@@ -154,7 +168,7 @@ void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3
 	// Also re-calculate the Right and Up vector
 	glm::vec3 rightOfCar = glm::normalize(glm::cross(carfront, upOfCar));
 	if (direction == FORWARD) {
-		carShift +=carfront * velocity;
+		carShift += carfront * velocity;
 	}
 	if (direction == LEFT_FORWARD) {
 		Yaw += 1;
@@ -197,6 +211,8 @@ void Game::Render()
 	// for custom object, model matrix already configure in Draw() function
 	scene->Draw("DepthShader", nullptr);
 	// for model object, model matrix do not configure in Draw() function, we need to configure model matrix!
+
+	//render car shadow
 	fiatCar->shader = ResourceManager::GetShader("DepthShader");
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, carPos);
@@ -205,13 +221,38 @@ void Game::Render()
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
 	// here should pass a bool value to Mesh Draw, if is depthshader, then do not configure texture
-	// if (!IsConflict())
 	fiatCar->Draw(depthMap);
+
+	//render old house shadow
 	model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
-	if (renderOldHouseFlag)
+	for (int i = 0; i < 4; i++) {
 		oldHouse->Draw(depthMap);
+		model = glm::translate(model, glm::vec3(20.0f, 0.0f, 0.0f));
+		ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
+	}
+
+	//render tree shadow
+	model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 80.0f));
+	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
+	for (int i = 0; i < 4; i++) {
+		tree->Draw(depthMap);
+		model = glm::translate(model, glm::vec3(20.0f, 0.0f, 0.0f));
+		ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
+	}
+
+	//render temple shadow
+	if (renderTempleFlag) {
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+		model = glm::translate(model, glm::vec3(-6.7f, 0.0f, 60.0f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
+		temple->Draw(depthMap);
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -261,17 +302,37 @@ void Game::Render()
 
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, carPos);
-	// model = glm::translate(model, glm::vec3(1.5f, 0.0f, 3.0f));
+	model = glm::translate(model, glm::vec3(-0.3f, 0.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
 	fiatCar->shader = ResourceManager::GetShader("BasicModelShader");
 	fiatCar->Draw(depthMap);
 
+	//render house
 	model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
 	oldHouse->shader = ResourceManager::GetShader("BasicModelShader");
+	for (int i = 0; i < 4; i++) {
+		oldHouse->Draw(depthMap);
+		model = glm::translate(model, glm::vec3(20.0f, 0.0f, 0.0f));
+		oldHouse->shader.Use().SetMatrix4("model", model);
+	}
+	//render trees
+	model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 76.0f));
+	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
+	tree->shader = ResourceManager::GetShader("BasicModelShader");
+	for (int i = 0; i < 4; i++) {
+		tree->Draw(depthMap);
+		model = glm::translate(model, glm::vec3(20.0f, 0.0f, 0.0f));
+		tree->shader.Use().SetMatrix4("model", model);
+	}
+
+	//render temple
+	temple->shader = ResourceManager::GetShader("BasicModelShader");
 	if (IsConflict())
 	{
 		ResourceManager::GetShader("explodeShader").Use().SetMatrix4("model", model);
@@ -280,14 +341,19 @@ void Game::Render()
 		ResourceManager::GetShader("explodeShader").Use().SetFloat("time", timeCounter);
 		timeCounter = (timeCounter + 0.015f) <= 1.5f ? (timeCounter + 0.015f) : 1.5f;
 		if (timeCounter >= 1.5f)
-			renderOldHouseFlag = false;
-		// cout << timeCounter << endl;
-		// cout << glfwGetTime() << endl;
-		oldHouse->shader = ResourceManager::GetShader("explodeShader");
+			renderTempleFlag = false;
+		temple->shader = ResourceManager::GetShader("explodeShader");
 	}
-	
-	if (renderOldHouseFlag)
-		oldHouse->Draw(depthMap);
+	if (renderTempleFlag) {
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+		model = glm::translate(model, glm::vec3(-6.7f, 0.0f, 60.0f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		temple->shader.Use().SetMatrix4("model", model);
+		temple->Draw(depthMap);
+	}
+
+
 
 	// Skybox Shader
 	ResourceManager::GetShader("skyShader").Use().SetMatrix4("view",
@@ -296,7 +362,7 @@ void Game::Render()
 	if (renderSkybox) {
 		skybox->Draw();
 	}
-	
+
 	// Compile and setup the textshader
 	projection = glm::ortho(0.0f, static_cast<GLfloat>(Width), 0.0f, static_cast<GLfloat>(Height));
 	ResourceManager::GetShader("textShader").Use().SetMatrix4("projection", projection);
@@ -305,12 +371,12 @@ void Game::Render()
 }
 
 bool Game::IsConflict() {
-	// std::cout << carPos.x << " " << carPos.y << " " << carPos.z << endl;
-    bool collisionX = abs(carPos.x + carSizeX) <= 1 || abs(carPos.x - carSizeX) <= 1;
-    bool collisionY = abs(carPos.z + carSizeY) <= 1 || abs(carPos.z - carSizeY) <= 1;
-	// cout << collisionX << " " << collisionY << endl;
-    // Collision only if on both axes
-    return collisionX && collisionY;
+	//std::cout << carPos.x << " " << carPos.y << " " << carPos.z << endl;
+	bool collisionX = abs(carPos.x + carSizeX -1.5) <= 1 || abs(carPos.x - carSizeX-1.5) <= 1;
+	bool collisionY = abs(carPos.z + carSizeY-20) <= 1 || abs(carPos.z - carSizeY-20) <= 1;
+	//cout << collisionX << " " << collisionY << endl;
+	// Collision only if on both axes
+	return collisionX && collisionY;
 }
 
 glm::vec3 Game::getFrontOfCar() {
