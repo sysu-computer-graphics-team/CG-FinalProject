@@ -47,6 +47,7 @@ public:
 	void Update();
 	void Render();
 	bool IsConflict();
+	void IsConflict(int i);
 	glm::vec3 getFrontOfCar();
 };
 

@@ -56,7 +56,7 @@ public:
 		std::cout << "Scene initRenderData" << std::endl;
 		// New Scene Object
 		// plane
-		plane = new Plane(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("wood"));
+		plane = new Plane(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("block"));
 		plane->setParam(3.0f, 3.0f);
 		// border
 		border = new Border(ResourceManager::GetShader("ShadowShader"), ResourceManager::GetTexture("wood"));

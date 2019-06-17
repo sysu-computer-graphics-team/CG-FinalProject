@@ -153,17 +153,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             mouseCaptured = false;
         }
     }
-
     if (key == GLFW_KEY_B && action == GLFW_PRESS) {
         SimpleScene.isBlinn = !SimpleScene.isBlinn;
         std::cout << "Lighting: " << ((SimpleScene.isBlinn) ? "Blinn" : "Phong") << std::endl;
     }
+	if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+		camera.freecamera = !camera.freecamera;
+	}
 }
 
 void processInput(GLFWwindow* window) {
-	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
-		camera.freecamera = !camera.freecamera;
-	}
+	
 	if (!camera.freecamera) {
 		frontOfCar = SimpleScene.getFrontOfCar();
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {

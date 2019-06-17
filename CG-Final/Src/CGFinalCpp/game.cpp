@@ -36,7 +36,11 @@ const bool renderSkybox = true;
 const unsigned int carSizeX = 1, carSizeY = 1;
 
 float timeCounter = -1.5708f;
+float housetime[4] = { -1.5708f ,-1.5708f ,-1.5708f ,-1.5708f };
 
+float brokehousez[4] = { 3,13,23,33 };
+bool brokehouseflag[4] = { false,false,false,false };
+bool renderhouseflag[4] = { true,true,true,true };
 // shadow size
 const unsigned int SHADOW_WIDTH = 1280, SHADOW_HEIGHT = 1280;
 
@@ -75,7 +79,7 @@ void Game::Init()
 	ResourceManager::LoadShader("../Resources/shaders/explode.vs", "../Resources/shaders/explode.fs", "../Resources/shaders/explode.gs", "explodeShader");
 
 	// Load textures
-	// ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
+	 ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
 	// ResourceManager::LoadTexture("../Resources/textures/block_solid.png", GL_TRUE, "block_solid");
 	// ResourceManager::LoadTexture("../Resources/textures/container2.png", GL_TRUE, "container2");
 	// ResourceManager::LoadTexture("../Resources/textures/container2_specular.png", GL_TRUE, "container2_specular");
@@ -89,12 +93,12 @@ void Game::Init()
 	// ResourceManager::LoadTexture("../Resources/textures/animal_skin_0.jpg", GL_TRUE, "animal_skin_0");
 	/* skybox */
 	vector<std::string> faces{
-		"../Resources/textures/skybox/right.jpg",
-		"../Resources/textures/skybox/left.jpg",
-		"../Resources/textures/skybox/top.jpg",
-		"../Resources/textures/skybox/bottom.jpg",
-		"../Resources/textures/skybox/front.jpg",
-		"../Resources/textures/skybox/back.jpg"
+		"../Resources/textures/origin/right.jpg",
+		"../Resources/textures/origin/left.jpg",
+		"../Resources/textures/origin/top.jpg",
+		"../Resources/textures/origin/bottom.jpg",
+		"../Resources/textures/origin/front.jpg",
+		"../Resources/textures/origin/back.jpg"
 	};
 	unsigned int cubemapTexture = ResourceManager::LoadCubemap(faces);
 
@@ -159,7 +163,7 @@ void Game::Update()
 
 void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3 frontOfCar, glm::vec3 upOfCar, float deltaTime)
 {
-	float velocity = SPEED * deltaTime;
+	float velocity = SPEED * deltaTime*1.5;
 	glm::vec3 front;
 	front.x = -cos(glm::radians(Yaw));
 	front.y = 0;
@@ -216,7 +220,7 @@ void Game::Render()
 	fiatCar->shader = ResourceManager::GetShader("DepthShader");
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, carPos);
-	// model = glm::translate(model, glm::vec3(1.5f, 0.0f, 3.0f));
+	model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
@@ -238,20 +242,30 @@ void Game::Render()
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 80.0f));
 	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 8; i++) {
 		tree->Draw(depthMap);
-		model = glm::translate(model, glm::vec3(20.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(10.0f, 0.0f, 0.0f));
 		ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
 	}
 
 	//render temple shadow
 	if (renderTempleFlag) {
 		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
-		model = glm::translate(model, glm::vec3(-6.7f, 0.0f, 60.0f));
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(19.0f, 0.0f, 19.0f));
 		ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
 		temple->Draw(depthMap);
+	}
+	//render broke house shadow
+	model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+	model = glm::translate(model, glm::vec3(70.0f, 0.0f, 10.0f));
+	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
+	for (int i = 0; i < 4; i++) {
+		if (renderhouseflag[i]) {
+			oldHouse->Draw(depthMap);
+		}		
+		model = glm::translate(model, glm::vec3(20.0f, 0.0f, 0.0f));
+		ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -302,7 +316,7 @@ void Game::Render()
 
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, carPos);
-	model = glm::translate(model, glm::vec3(-0.3f, 0.0f, 0.0f));
+	model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(Yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
@@ -325,9 +339,9 @@ void Game::Render()
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 76.0f));
 	ResourceManager::GetShader("BasicModelShader").Use().SetMatrix4("model", model);
 	tree->shader = ResourceManager::GetShader("BasicModelShader");
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 8; i++) {
 		tree->Draw(depthMap);
-		model = glm::translate(model, glm::vec3(20.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(10.0f, 0.0f, 0.0f));
 		tree->shader.Use().SetMatrix4("model", model);
 	}
 
@@ -346,13 +360,36 @@ void Game::Render()
 	}
 	if (renderTempleFlag) {
 		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
-		model = glm::translate(model, glm::vec3(-6.7f, 0.0f, 60.0f));
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(19.0f, 0.0f, 19.0f));
 		temple->shader.Use().SetMatrix4("model", model);
 		temple->Draw(depthMap);
 	}
-
+	//render broke house
+	model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+	model = glm::translate(model, glm::vec3(70.0f, 0.0f, 10.0f));
+	for (int i = 0; i < 4; i++) {
+		if (renderhouseflag[i]) {
+			IsConflict(i);
+			if (brokehouseflag[i]) {
+				ResourceManager::GetShader("explodeShader").Use().SetMatrix4("model", model);
+				ResourceManager::GetShader("explodeShader").Use().SetMatrix4("view", view);
+				ResourceManager::GetShader("explodeShader").Use().SetMatrix4("projection", projection);
+				ResourceManager::GetShader("explodeShader").Use().SetFloat("time", housetime[i]);
+				housetime[i] = (housetime[i] + 0.015f) <= 1.5f ? (housetime[i] + 0.015f) : 1.5f;
+				if (housetime[i] >= 1.5f)
+					renderhouseflag[i] = false;
+				oldHouse->shader = ResourceManager::GetShader("explodeShader");
+			}
+			else
+			{
+				oldHouse->shader = ResourceManager::GetShader("BasicModelShader");
+			}
+			oldHouse->shader.Use().SetMatrix4("model", model);
+			oldHouse->Draw(depthMap);			
+		}		
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 20.0f));
+	}
 
 
 	// Skybox Shader
@@ -372,13 +409,26 @@ void Game::Render()
 
 bool Game::IsConflict() {
 	//std::cout << carPos.x << " " << carPos.y << " " << carPos.z << endl;
-	bool collisionX = abs(carPos.x + carSizeX -1.5) <= 1 || abs(carPos.x - carSizeX-1.5) <= 1;
-	bool collisionY = abs(carPos.z + carSizeY-20) <= 1 || abs(carPos.z - carSizeY-20) <= 1;
+	bool collisionX = abs(carPos.x + carSizeX -1.5) <= 1.5 || abs(carPos.x - carSizeX-1.5) <= 1.5;
+	bool collisionY = abs(carPos.z + carSizeY-20) <= 1.5 || abs(carPos.z - carSizeY-20) <= 1.5;
 	//cout << collisionX << " " << collisionY << endl;
 	// Collision only if on both axes
-	return collisionX && collisionY;
+	//return collisionX && collisionY;
+	return false;
+}
+void Game::IsConflict(int i) {
+	//std::cout << carPos.x << " " << carPos.y << " " << carPos.z << endl;
+	bool collisionX = abs(carPos.x + carSizeX - 35.4) <= 1.5 || abs(carPos.x - carSizeX - 35.4) <= 1.5;
+	bool collisionY = abs(carPos.z + carSizeY - brokehousez[i]) <= 1.5 || abs(carPos.z - carSizeY - brokehousez[i]) <= 1.5;
+	//cout << collisionX << " " << collisionY << endl;
+	// Collision only if on both axes
+	if (collisionX && collisionY) {
+		brokehouseflag[i] = true;
+	}
 }
 
 glm::vec3 Game::getFrontOfCar() {
 	return carfront;
 }
+
+
