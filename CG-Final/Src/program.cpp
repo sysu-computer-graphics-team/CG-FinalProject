@@ -167,42 +167,67 @@ void processInput(GLFWwindow* window) {
 	if (!camera.freecamera) {
 		frontOfCar = SimpleScene.getFrontOfCar();
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			if (SimpleScene.carSpeed < 20) {
+				SimpleScene.carSpeed += 1;
+			}
 			//camera.ProcessKeyboard(FORWARD, frontOfCar, upOfCar, deltaTime);	
 			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 				camera.ProcessKeyboard(LEFT_FORWARD, frontOfCar, upOfCar, deltaTime);
 				SimpleScene.ProcessInput(window, LEFT_FORWARD, frontOfCar, upOfCar, deltaTime);
-				SimpleScene.str = "speed : 30";
+				int s = 3 * SimpleScene.carSpeed;
+				SimpleScene.str = "speed : " + to_string(s);
 
 			}
 			else  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 				camera.ProcessKeyboard(RIGHT_FORWARD, frontOfCar, upOfCar, deltaTime);
 				SimpleScene.ProcessInput(window, RIGHT_FORWARD, frontOfCar, upOfCar, deltaTime);
-				SimpleScene.str = "speed : 30";
+				int s = 3 * SimpleScene.carSpeed;
+				SimpleScene.str = "speed : " + to_string(s);
 			}
 			else {
 				SimpleScene.ProcessInput(window, FORWARD, frontOfCar, upOfCar, deltaTime);
-				SimpleScene.str = "speed : 50";
+				int s = 3 * SimpleScene.carSpeed;
+				SimpleScene.str = "speed : " + to_string(s);
 			}
 		}
 		else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 			//camera.ProcessKeyboard(BACKWARD, frontOfCar, upOfCar, deltaTime);
-
+			if (SimpleScene.carSpeed > -20) {
+				SimpleScene.carSpeed -= 1;
+			}
 			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 				camera.ProcessKeyboard(LEFT_BACKWARD, frontOfCar, upOfCar, deltaTime);
 				SimpleScene.ProcessInput(window, LEFT_BACKWARD, frontOfCar, upOfCar, deltaTime);
-				SimpleScene.str = "speed : 30";
+				int s = 3 * SimpleScene.carSpeed;
+				SimpleScene.str = "speed : " + to_string(abs(s));
 			}
 			else  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 				camera.ProcessKeyboard(RIGHT_BACKWARD, frontOfCar, upOfCar, deltaTime);
 				SimpleScene.ProcessInput(window, RIGHT_BACKWARD, frontOfCar, upOfCar, deltaTime);
-				SimpleScene.str = "speed : 30";
+				int s = 3 * SimpleScene.carSpeed;
+				SimpleScene.str = "speed : " + to_string(abs(s));
 			}
 			else {
 				SimpleScene.ProcessInput(window, BACKWARD, frontOfCar, upOfCar, deltaTime);
-				SimpleScene.str = "speed : 50";
+				int s = 3 * SimpleScene.carSpeed;
+				SimpleScene.str = "speed : " + to_string(abs(s));
 			}
 		}
-		else SimpleScene.str = "speed : 0";
+		else {
+			if (SimpleScene.carSpeed > 0) {
+				SimpleScene.carSpeed -= 1;
+				SimpleScene.ProcessInput(window, FORWARD, frontOfCar, upOfCar, deltaTime);
+				int s = 3 * SimpleScene.carSpeed;
+				SimpleScene.str = "speed : " + to_string(abs(s));
+			}
+			else if (SimpleScene.carSpeed < 0) {
+				SimpleScene.carSpeed += 1;
+				SimpleScene.ProcessInput(window, BACKWARD, frontOfCar, upOfCar, deltaTime);
+				int s = 3 * SimpleScene.carSpeed;
+				SimpleScene.str = "speed : " + to_string(abs(s));
+			}
+			else SimpleScene.str = "speed : 0";
+		}
 		glm::vec3 rightOfCar = glm::normalize(glm::cross(frontOfCar, upOfCar));
 		glm::vec3 Postion = SimpleScene.carPos;
 		glm::vec3 backShift = glm::vec3(-5 * frontOfCar.x, -5 * frontOfCar.y, -5 * frontOfCar.z);

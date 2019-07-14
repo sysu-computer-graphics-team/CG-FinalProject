@@ -163,7 +163,7 @@ void Game::Update()
 
 void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3 frontOfCar, glm::vec3 upOfCar, float deltaTime)
 {
-	float velocity = SPEED * deltaTime*1.5;
+	float velocity = SPEED * deltaTime*0.10 * abs(carSpeed);
 	glm::vec3 front;
 	front.x = -cos(glm::radians(Yaw));
 	front.y = 0;
@@ -175,7 +175,7 @@ void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3
 		carShift += carfront * velocity;
 	}
 	if (direction == LEFT_FORWARD) {
-		Yaw += 1;
+		Yaw += 2;
 	}
 	if (direction == RIGHT_FORWARD) {
 		Yaw -= 1;
@@ -183,7 +183,7 @@ void Game::ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3
 		carShift += carfront * v;
 	}
 	if (direction == LEFT_BACKWARD) {
-		Yaw -= 1;
+		Yaw -= 2;
 	}
 	if (direction == RIGHT_BACKWARD) {
 		Yaw += 1;

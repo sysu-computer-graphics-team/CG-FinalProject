@@ -85,11 +85,11 @@ public:
 		if (direction == BACKWARD)
 			Position -= frontOfCar * velocity;
 		if (direction == LEFT_FORWARD)
-			ProcessMouseMovement(-10, 0, TRUE);
+			ProcessMouseMovement(-20, 0, TRUE);
 		if (direction == RIGHT_FORWARD)
 			ProcessMouseMovement(10, 0, TRUE);
 		if (direction == LEFT_BACKWARD)
-			ProcessMouseMovement(10, 0, TRUE);
+			ProcessMouseMovement(20, 0, TRUE);
 		if (direction == RIGHT_BACKWARD)
 			ProcessMouseMovement(-10, 0, TRUE);
 		// make sure the user stays at the ground level
