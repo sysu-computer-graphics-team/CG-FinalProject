@@ -44,7 +44,7 @@ public:
 	void Init();
 	// GameLoop
 	void ProcessInput(GLFWwindow *window, Camera_Movement direction, glm::vec3 frontOfCar, glm::vec3 upOfCar, float deltaTime);
-	void Update();
+	void Update(GLfloat dt);
 	void Render();
 	bool IsConflict();
 	glm::vec3 getFrontOfCar();

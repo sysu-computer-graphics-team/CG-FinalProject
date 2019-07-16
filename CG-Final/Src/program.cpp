@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
         //SimpleScene.ProcessInput(window, deltaTime);
 
         // Update Game state
-        SimpleScene.Update();
+        SimpleScene.Update(deltaTime);
 
         // Render
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

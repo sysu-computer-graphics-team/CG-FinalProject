@@ -8,6 +8,7 @@
 #include <CGFinalHeader/skybox/skybox.h>
 #include <CGFinalHeader/scene/scene.h>
 #include <CGFinalHeader/customObject/lamp.h>
+#include <CGFinalHeader/particle/particle.h>
 
 
 Lamp *lamp;
@@ -23,6 +24,9 @@ bool renderOldHouseFlag = true;
 
 // Skybox
 Skybox* skybox;
+
+// Particle
+ParticleGenerator* particles;
 
 // lightPos
 glm::vec3 lightPos(0.0001f, 10.0f, 0.0f);
@@ -70,6 +74,7 @@ void Game::Init()
 	ResourceManager::LoadShader("../Resources/shaders/lamp.vs", "../Resources/shaders/lamp.fs", nullptr, "LampShader");
 	ResourceManager::LoadShader("../Resources/shaders/textShader.vs", "../Resources/shaders/textShader.fs", nullptr, "textShader");
 	ResourceManager::LoadShader("../Resources/shaders/explode.vs", "../Resources/shaders/explode.fs", "../Resources/shaders/explode.gs", "explodeShader");
+	ResourceManager::LoadShader("../Resources/shaders/particleShader.vs", "../Resources/shaders/particleShader.fs", nullptr, "particleShader");
 	
 	// Load textures
 	// ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
@@ -83,6 +88,8 @@ void Game::Init()
 	// ResourceManager::LoadTexture("../Resources/textures/window.png", GL_TRUE, "window");
 	// ResourceManager::LoadTexture("../Resources/textures/snake_skin.jpg", GL_TRUE, "snake_skin");
 	// ResourceManager::LoadTexture("../Resources/textures/animal_skin_0.jpg", GL_TRUE, "animal_skin_0");
+	ResourceManager::LoadTexture("../Resources/textures/particle.png", GL_TRUE, "particle");
+
 	/* skybox */
 	vector<std::string> faces{
 		"../Resources/textures/skybox/right.jpg",
@@ -134,12 +141,17 @@ void Game::Init()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	mytext.init();
+
+	particles = new ParticleGenerator(ResourceManager::GetShader("particleShader"), ResourceManager::GetTexture("particle"), 500);
 }
 
-void Game::Update()
+void Game::Update(GLfloat dt)
 {
 	carPos += carShift;
+	particles->Update(dt, 2, carShift, carPos, glm::vec2(100.0f, 100.0f));
+
 	carShift = glm::vec3(0.0f, 0.0f, 0.0f);
+
 }
 
 
@@ -296,6 +308,10 @@ void Game::Render()
 	if (renderSkybox) {
 		skybox->Draw();
 	}
+
+	// particle test
+	ResourceManager::GetShader("particleShader").Use().SetInteger("sprite", 0);
+	ResourceManager::GetShader("particleShader").SetMatrix4("projection", projection);
 	
 	// Compile and setup the textshader
 	projection = glm::ortho(0.0f, static_cast<GLfloat>(Width), 0.0f, static_cast<GLfloat>(Height));
