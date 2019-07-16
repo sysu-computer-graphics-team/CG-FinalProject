@@ -32,6 +32,7 @@ public:
 	GLuint depthMapFBO, depthMap;
 	GLuint planeVAO;
 	float Yaw = -90;
+	int carSpeed = 0;
 	myText mytext;
 	std::string str;
 	glm::vec3 carPos = glm::vec3(5, 0, 5);
@@ -47,6 +48,7 @@ public:
 	void Update(GLfloat dt);
 	void Render();
 	bool IsConflict();
+	void IsConflict(int i);
 	glm::vec3 getFrontOfCar();
 };
 

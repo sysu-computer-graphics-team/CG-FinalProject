@@ -87,7 +87,7 @@ public:
 		float z_offset = 2.0f * z;
 
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(x_offset, 0.0f, z_offset));
+		model = glm::translate(model, glm::vec3(x_offset, 0.7f, z_offset));
 		this->shader.Use().SetMatrix4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 

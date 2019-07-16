@@ -86,6 +86,9 @@
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Includes\CGFinalHeader\customObject\windowsObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="Includes\CGFinalHeader\particle\particle.h">
       <Filter>头文件</Filter>
     </ClInclude>

@@ -45,6 +45,7 @@
     <ClInclude Include="Includes\CGFinalHeader\skybox\skybox.h" />
     <ClInclude Include="Includes\CGFinalHeader\texture\texture.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Includes\CGFinalHeader\customObject\windowsObject.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -70,7 +71,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
