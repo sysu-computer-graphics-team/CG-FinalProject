@@ -84,7 +84,7 @@ void Game::Init()
 	ResourceManager::LoadShader("../Resources/shaders/lamp.vs", "../Resources/shaders/lamp.fs", nullptr, "LampShader");
 	ResourceManager::LoadShader("../Resources/shaders/textShader.vs", "../Resources/shaders/textShader.fs", nullptr, "textShader");
 	ResourceManager::LoadShader("../Resources/shaders/explode.vs", "../Resources/shaders/explode.fs", "../Resources/shaders/explode.gs", "explodeShader");
-	ResourceManager::LoadShader("../Resources/shaders/particleShader.vs", "../Resources/shaders/particleShader.fs", nullptr, "particleShader");
+	//ResourceManager::LoadShader("../Resources/shaders/particleShader.vs", "../Resources/shaders/particleShader.fs", nullptr, "particleShader");
 	
 	// Load textures
 	 ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
@@ -99,7 +99,6 @@ void Game::Init()
 	// ResourceManager::LoadTexture("../Resources/textures/window.png", GL_TRUE, "window");
 	// ResourceManager::LoadTexture("../Resources/textures/snake_skin.jpg", GL_TRUE, "snake_skin");
 	// ResourceManager::LoadTexture("../Resources/textures/animal_skin_0.jpg", GL_TRUE, "animal_skin_0");
-	ResourceManager::LoadTexture("../Resources/textures/particle.png", GL_TRUE, "particle");
 
 	/* skybox */
 	vector<std::string> faces{

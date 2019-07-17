@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Particle.h"
+#include <CGFinalHeader/particle/particle.h>
 #include <assimp/cimport.h>
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"

@@ -1,5 +1,5 @@
 ﻿
-#include "Particle.h"
+#include <CGFinalHeader/particle/particle.h>
 
 // 构造函数 //
 CParticle::CParticle()

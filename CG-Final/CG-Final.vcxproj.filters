@@ -92,10 +92,10 @@
     <ClInclude Include="Includes\CGFinalHeader\customObject\windowsObject.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Src\CGFinalCpp\particle.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="Includes\CGFinalHeader\snow\SnowFall.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\CGFinalHeader\particle\particle.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

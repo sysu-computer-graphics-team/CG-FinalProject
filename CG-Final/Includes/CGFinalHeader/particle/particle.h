@@ -1,130 +1,74 @@
-#pragma once
-#ifndef PARTICLE_H
-#define PARTICLE_H
-
+﻿
+#ifndef __opengl__Particle__
+#define __opengl__Particle__
+#ifdef _MSC_VER
+#include <direct.h>
+#include <glad/glad.h>
 #include <iostream>
+#else
+#include <OpenGL/gl3.h>
+#include <GLUT/glut.h>
+#include <unistd.h>
+#endif
 
-#include <CGFinalHeader/customObject/custom_object.h>
+// 粒子结构 //
+struct Particle
+{
+	float x, y, z;            //< 粒子的位置 //
+	float vx, vy, vz;         //< 粒子的速度(x,y,z方向) //
+	float ax, ay, az;         //< 粒子在x，y，z上的加速度 //
 
-struct myParticle {
-	glm::vec2 Position, Velocity;
-	glm::vec4 Color;
-	GLfloat Life;
-
-	myParticle() : Position(0.0f), Velocity(0.0f), Color(1.0f), Life(10.0f) { }
 };
 
-class ParticleGenerator {
-public:
-	ParticleGenerator(Shader shader, Texture2D texture, GLuint amount)
-		: shader(shader), texture(texture), amount(amount)
-	{
-		this->init();
-	}
-	void Update(GLfloat dt, GLuint newParticles, glm::vec2 offset, glm::vec2 position, glm::vec2 velocity)
-	{
-		// Add new particles 
-		for (GLuint i = 0; i < newParticles; ++i)
-		{
-			int unusedParticle = this->firstUnusedParticle();
-			this->respawnParticle(this->particles[unusedParticle], offset, position, velocity);
-		}
-		// Update all particles
-		for (GLuint i = 0; i < this->amount; ++i)
-		{
-			myParticle& p = this->particles[i];
-			p.Life -= dt; // reduce life
-			if (p.Life > 0.0f)
-			{	// particle is alive, thus update
-				p.Position -= p.Velocity * dt;
-				p.Color.a -= dt * 2.5;
-			}
-		}
-	}
-	void Draw()
-	{
-		// Use additive blending to give it a 'glow' effect
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		this->shader.Use();
-		for (myParticle particle : this->particles)
-		{
-			if (particle.Life > 0.0f)
-			{
-				this->shader.SetVector2f("offset", particle.Position);
-				this->shader.SetVector4f("color", particle.Color);
-				this->texture.Bind();
-				glBindVertexArray(this->VAO);
-				glDrawArrays(GL_TRIANGLES, 0, 6);
-				glBindVertexArray(0);
-			}
-		}
-		// Don't forget to reset to default blending mode
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
+// 粒子类 //
+class CParticle
+{
 private:
-	std::vector<myParticle> particles;
-	GLuint amount;
-	Shader shader;
-	Texture2D texture;
-	GLuint VAO;
-	GLuint lastUsedParticle = 0;
-	void init() {
-		// Set up mesh and attribute properties
-		GLuint VBO;
-		GLfloat particle_quad[] = {
-			0.0f, 1.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 0.0f,
+	Particle*   data;               //< 粒子指针 //
+	int         numparticle;        //< 粒子数目 //
 
-			0.0f, 1.0f, 0.0f, 1.0f,
-			1.0f, 1.0f, 1.0f, 1.0f,
-			1.0f, 0.0f, 1.0f, 0.0f
-		};
-		glGenVertexArrays(1, &this->VAO);
-		glGenBuffers(1, &VBO);
-		glBindVertexArray(this->VAO);
-		// Fill mesh buffer
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_STATIC_DRAW);
-		// Set mesh attributes
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-		glBindVertexArray(0);
+public:
+	CParticle();          //< 构造函数 //
+	~CParticle();         //< 析构函数 //
 
-		// Create this->amount default particle instances
-		for (GLuint i = 0; i < this->amount; ++i)
-			this->particles.push_back(myParticle());
-	}
-	GLuint firstUnusedParticle()
-	{
-		// First search from last used particle, this will usually return almost instantly
-		for (GLuint i = lastUsedParticle; i < this->amount; ++i) {
-			if (this->particles[i].Life <= 0.0f) {
-				lastUsedParticle = i;
-				return i;
-			}
-		}
-		// Otherwise, do a linear search
-		for (GLuint i = 0; i < lastUsedParticle; ++i) {
-			if (this->particles[i].Life <= 0.0f) {
-				lastUsedParticle = i;
-				return i;
-			}
-		}
-		// All particles are taken, override the first one (note that if it repeatedly hits this case, more particles should be reserved)
-		lastUsedParticle = 0;
-		return 0;
-	}
-	void respawnParticle(myParticle& particle, glm::vec2 offset, glm::vec2 position, glm::vec2 velocity)
-	{
-		GLfloat random = ((rand() % 100) - 50) / 10.0f;
-		GLfloat rColor = 0.5 + ((rand() % 100) / 100.0f);
-		//particle.Position = position + random + offset;
-		particle.Position = glm::vec2(10.0f, 10.0f);
-		particle.Color = glm::vec4(rColor, rColor, rColor, 1.0f);
-		particle.Life = 10.0f;
-		particle.Velocity = velocity * 0.1f;
-	}
+	// 创建粒子数组 //
+	int Create(long num);
+
+	// 设置和获取速度属性 //
+	int SetVelocity(GLfloat vx, GLfloat vy, GLfloat vz);
+	int SetVelocity(GLint index, GLfloat vx, GLfloat vy, GLfloat vz);
+	int GetVelocity(GLint index, GLfloat &vx, GLfloat &vy, GLfloat &vz);
+
+	// 设置和获取位置属性 //
+	int SetPosition(GLfloat x, GLfloat y, GLfloat z);
+	int SetPosition(GLint index, GLfloat x, GLfloat y, GLfloat z);
+	int GetPosition(GLint index, GLfloat &x, GLfloat &y, GLfloat &z);
+
+	// 设置和获取加速度属性 //
+	int SetAcceleration(GLfloat ax, GLfloat ay, GLfloat az);
+	int SetAcceleration(GLint index, GLfloat ax, GLfloat ay, GLfloat az);
+	int GetAcceletation(GLint index, GLfloat &ax, GLfloat &ay, GLfloat &az);
+
+	// 获取粒子数组地址 //
+	Particle *GetParticle() { return data; }
+
+	// 获得粒子的数目 //
+	int GetNumOfParticle() { return numparticle; }
+
+	// 获得粒子所有的属性 
+	int GetAll(int index,                               // 索引 
+		GLfloat &x, GLfloat &y, GLfloat &z,        // 位置 
+		GLfloat &vx, GLfloat &vy, GLfloat &vz, // 速度 
+		GLfloat &ax, GLfloat &ay, GLfloat &az //  加速度 
+	);
+
+	// 设置粒子的所有属性 
+	int SetAll(int index,                           // 索引 
+		GLfloat x, GLfloat y, GLfloat z,       // 位置 
+		GLfloat vx, GLfloat vy, GLfloat vz,    // 速度 
+		GLfloat ax, GLfloat ay, GLfloat az   // 加速度 
+	);
 };
 
-#endif	// PARTICLE_H
+#endif // defined(__opengl__Particle__) //
+
