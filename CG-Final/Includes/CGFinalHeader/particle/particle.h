@@ -6,12 +6,12 @@
 
 #include <CGFinalHeader/customObject/custom_object.h>
 
-struct Particle {
+struct myParticle {
 	glm::vec2 Position, Velocity;
 	glm::vec4 Color;
 	GLfloat Life;
 
-	Particle() : Position(0.0f), Velocity(0.0f), Color(1.0f), Life(10.0f) { }
+	myParticle() : Position(0.0f), Velocity(0.0f), Color(1.0f), Life(10.0f) { }
 };
 
 class ParticleGenerator {
@@ -32,7 +32,7 @@ public:
 		// Update all particles
 		for (GLuint i = 0; i < this->amount; ++i)
 		{
-			Particle& p = this->particles[i];
+			myParticle& p = this->particles[i];
 			p.Life -= dt; // reduce life
 			if (p.Life > 0.0f)
 			{	// particle is alive, thus update
@@ -46,7 +46,7 @@ public:
 		// Use additive blending to give it a 'glow' effect
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		this->shader.Use();
-		for (Particle particle : this->particles)
+		for (myParticle particle : this->particles)
 		{
 			if (particle.Life > 0.0f)
 			{
@@ -62,7 +62,7 @@ public:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 private:
-	std::vector<Particle> particles;
+	std::vector<myParticle> particles;
 	GLuint amount;
 	Shader shader;
 	Texture2D texture;
@@ -93,7 +93,7 @@ private:
 
 		// Create this->amount default particle instances
 		for (GLuint i = 0; i < this->amount; ++i)
-			this->particles.push_back(Particle());
+			this->particles.push_back(myParticle());
 	}
 	GLuint firstUnusedParticle()
 	{
@@ -115,7 +115,7 @@ private:
 		lastUsedParticle = 0;
 		return 0;
 	}
-	void respawnParticle(Particle& particle, glm::vec2 offset, glm::vec2 position, glm::vec2 velocity)
+	void respawnParticle(myParticle& particle, glm::vec2 offset, glm::vec2 position, glm::vec2 velocity)
 	{
 		GLfloat random = ((rand() % 100) - 50) / 10.0f;
 		GLfloat rColor = 0.5 + ((rand() % 100) / 100.0f);

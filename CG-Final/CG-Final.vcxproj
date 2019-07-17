@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Src\CGFinalCpp\game.cpp" />
     <ClCompile Include="Src\CGFinalCpp\custom_object.cpp" />
+    <ClCompile Include="Src\CGFinalCpp\particle.cpp" />
     <ClCompile Include="Src\CGFinalCpp\resource_manager.cpp" />
     <ClCompile Include="Src\CGFinalCpp\shader.cpp" />
     <ClCompile Include="Src\CGFinalCpp\texture.cpp" />
@@ -38,14 +39,15 @@
     <ClInclude Include="Includes\CGFinalHeader\modelObject\ModelObject.h" />
     <ClInclude Include="Includes\CGFinalHeader\model\mesh.h" />
     <ClInclude Include="Includes\CGFinalHeader\model\model.h" />
-    <ClInclude Include="Includes\CGFinalHeader\particle\particle.h" />
     <ClInclude Include="Includes\CGFinalHeader\resourceManager\resource_manager.h" />
     <ClInclude Include="Includes\CGFinalHeader\scene\scene.h" />
     <ClInclude Include="Includes\CGFinalHeader\shader\shader.h" />
     <ClInclude Include="Includes\CGFinalHeader\skybox\skybox.h" />
+    <ClInclude Include="Includes\CGFinalHeader\snow\SnowFall.hpp" />
     <ClInclude Include="Includes\CGFinalHeader\texture\texture.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Includes\CGFinalHeader\customObject\windowsObject.h" />
+    <ClInclude Include="Src\CGFinalCpp\particle.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -120,6 +122,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glfw3.lib;assimp-vc140-mt.lib;opengl32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>

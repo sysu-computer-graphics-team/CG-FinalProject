@@ -9,6 +9,7 @@
 #include <CGFinalHeader/scene/scene.h>
 #include <CGFinalHeader/customObject/lamp.h>
 #include <CGFinalHeader/particle/particle.h>
+#include <CGFinalHeader/snow/SnowFall.hpp>
 
 
 Lamp *lamp;
@@ -27,7 +28,9 @@ bool renderTempleFlag = true;
 Skybox* skybox;
 
 // Particle
-ParticleGenerator* particles;
+//ParticleGenerator* particles;
+SnowFall snowfall;
+ModelObject* sphere;
 
 // lightPos
 glm::vec3 lightPos(0.0001f, 10.0f, 0.0f);
@@ -152,7 +155,11 @@ void Game::Init()
 
 	mytext.init();
 
-	particles = new ParticleGenerator(ResourceManager::GetShader("particleShader"), ResourceManager::GetTexture("particle"), 500);
+	//particles = new ParticleGenerator(ResourceManager::GetShader("particleShader"), ResourceManager::GetTexture("particle"), 500);
+	snowfall.InitSnowProgram();
+
+	ResourceManager::LoadModel("../Resources/objects/sphere/Sphere.obj", "sphere");
+	sphere = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("sphere"));
 }
 
 void Game::Update(GLfloat dt)
@@ -166,7 +173,7 @@ void Game::Update(GLfloat dt)
 			carPos = position;
 	}
 
-	particles->Update(dt, 2, carShift, carPos, glm::vec2(100.0f, 100.0f));
+	//particles->Update(dt, 2, carShift, carPos, glm::vec2(100.0f, 100.0f));
 	carShift = glm::vec3(0.0f, 0.0f, 0.0f);
 
 }
@@ -237,6 +244,14 @@ void Game::Render()
 	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
 	// here should pass a bool value to Mesh Draw, if is depthshader, then do not configure texture
 	fiatCar->Draw(depthMap);
+
+	// sphere
+	sphere->shader = ResourceManager::GetShader("DepthShader");
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(2.0f, 2.0f, 2.0f));
+	model = glm::scale(model, glm::vec3(10.0f));
+	ResourceManager::GetShader("DepthShader").Use().SetMatrix4("model", model);
+	sphere->Draw(depthMap);
 
 	//render old house shadow
 	model = glm::mat4(1.0f);
@@ -412,8 +427,10 @@ void Game::Render()
 	}
 
 	// particle test
-	ResourceManager::GetShader("particleShader").Use().SetInteger("sprite", 0);
-	ResourceManager::GetShader("particleShader").SetMatrix4("projection", projection);
+	//ResourceManager::GetShader("particleShader").Use().SetInteger("sprite", 0);
+	//ResourceManager::GetShader("particleShader").SetMatrix4("projection", projection);
+	snowfall.setCamera(camera->Position);
+	snowfall.DrawParticle(camera->GetViewMatrix(), projection);
 	
 	// Compile and setup the textshader
 	projection = glm::ortho(0.0f, static_cast<GLfloat>(Width), 0.0f, static_cast<GLfloat>(Height));
