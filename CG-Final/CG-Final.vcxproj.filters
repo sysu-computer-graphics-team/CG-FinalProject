@@ -98,5 +98,11 @@
     <ClInclude Include="Includes\CGFinalHeader\particle\particle.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Includes\CGFinalHeader\snow\snow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\particle\ParticleSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

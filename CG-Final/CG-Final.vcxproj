@@ -44,8 +44,10 @@
     <ClInclude Include="Includes\CGFinalHeader\scene\scene.h" />
     <ClInclude Include="Includes\CGFinalHeader\shader\shader.h" />
     <ClInclude Include="Includes\CGFinalHeader\skybox\skybox.h" />
+    <ClInclude Include="Includes\CGFinalHeader\snow\snow.h" />
     <ClInclude Include="Includes\CGFinalHeader\snow\SnowFall.hpp" />
     <ClInclude Include="Includes\CGFinalHeader\texture\texture.h" />
+    <ClInclude Include="Includes\particle\ParticleSystem.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Includes\CGFinalHeader\customObject\windowsObject.h" />
   </ItemGroup>

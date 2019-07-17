@@ -12,7 +12,7 @@
 #endif
 
 // 粒子结构 //
-struct Particle
+struct myParticle
 {
 	float x, y, z;            //< 粒子的位置 //
 	float vx, vy, vz;         //< 粒子的速度(x,y,z方向) //
@@ -24,7 +24,7 @@ struct Particle
 class CParticle
 {
 private:
-	Particle*   data;               //< 粒子指针 //
+	myParticle*   data;               //< 粒子指针 //
 	int         numparticle;        //< 粒子数目 //
 
 public:
@@ -50,7 +50,7 @@ public:
 	int GetAcceletation(GLint index, GLfloat &ax, GLfloat &ay, GLfloat &az);
 
 	// 获取粒子数组地址 //
-	Particle *GetParticle() { return data; }
+	myParticle *GetParticle() { return data; }
 
 	// 获得粒子的数目 //
 	int GetNumOfParticle() { return numparticle; }

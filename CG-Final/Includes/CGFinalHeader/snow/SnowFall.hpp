@@ -195,6 +195,7 @@ class SnowFall {
 			/*vx = 0.0001 * (rand() % 100);
 			vy = (float)(0.0000004 * (rand() % 28000)) + 0.30;
 			vz = 0.0001 * (rand() % 100);*/
+			// test code
 			vx = 10.0f;
 			vy = 10.0f;
 			vz = 10.0f;
@@ -204,13 +205,13 @@ class SnowFall {
 			/*ax = 0;
 			ay = 0.000005f;
 			az = 0;*/
+			// test code
 			ax = 10.0f;
 			ay = 10.0f;
 			az = 10.0f;
 			Snow.SetAcceleration(i, ax, ay, az);
 
 		}
-		ResourceManager::LoadShader("../Resources/shaders/snow_vertex.glsl", "../Resources/shaders/snow_fragment.glsl", nullptr, "snowfallShader");
 		return true;
 	}
 
@@ -349,6 +350,7 @@ public:
 		InitSnow();
 		loadModel("../Resources/objects/sphere/Sphere.obj");
 		shapes->vbo_texcoord = CreateTexture("../Resources/textures/snowball.png");
+		ResourceManager::LoadShader("../Resources/shaders/snow_vertex.glsl", "../Resources/shaders/snow_fragment.glsl", nullptr, "snowfallShader");
 	}
 	void setCamera(vec3 camera)
 	{

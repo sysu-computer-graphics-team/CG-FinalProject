@@ -10,6 +10,7 @@
 #include <CGFinalHeader/customObject/lamp.h>
 #include <CGFinalHeader/particle/particle.h>
 #include <CGFinalHeader/snow/SnowFall.hpp>
+#include <CGFinalHeader/particle/ParticleSystem.h>
 
 
 Lamp *lamp;
@@ -31,6 +32,7 @@ Skybox* skybox;
 //ParticleGenerator* particles;
 SnowFall snowfall;
 ModelObject* sphere;
+ParticleSystem* particleSystem;
 
 // lightPos
 glm::vec3 lightPos(0.0001f, 10.0f, 0.0f);
@@ -85,7 +87,8 @@ void Game::Init()
 	ResourceManager::LoadShader("../Resources/shaders/textShader.vs", "../Resources/shaders/textShader.fs", nullptr, "textShader");
 	ResourceManager::LoadShader("../Resources/shaders/explode.vs", "../Resources/shaders/explode.fs", "../Resources/shaders/explode.gs", "explodeShader");
 	//ResourceManager::LoadShader("../Resources/shaders/particleShader.vs", "../Resources/shaders/particleShader.fs", nullptr, "particleShader");
-	
+	ResourceManager::LoadShader("../Resources/shaders/snow.vs", "../Resources/shaders/snow.fs", nullptr, "snowShader");
+
 	// Load textures
 	 ResourceManager::LoadTexture("../Resources/textures/block.png", GL_TRUE, "block");
 	// ResourceManager::LoadTexture("../Resources/textures/block_solid.png", GL_TRUE, "block_solid");
@@ -99,6 +102,7 @@ void Game::Init()
 	// ResourceManager::LoadTexture("../Resources/textures/window.png", GL_TRUE, "window");
 	// ResourceManager::LoadTexture("../Resources/textures/snake_skin.jpg", GL_TRUE, "snake_skin");
 	// ResourceManager::LoadTexture("../Resources/textures/animal_skin_0.jpg", GL_TRUE, "animal_skin_0");
+	ResourceManager::LoadTexture("../Resources/textures/snow.png", GL_TRUE, "snow");
 
 	/* skybox */
 	vector<std::string> faces{
@@ -159,6 +163,11 @@ void Game::Init()
 
 	ResourceManager::LoadModel("../Resources/objects/sphere/Sphere.obj", "sphere");
 	sphere = new ModelObject(ResourceManager::GetShader("BasicModelShader"), ResourceManager::GetModel("sphere"));
+	Shader snowShader = ResourceManager::GetShader("snowShader");
+	snowShader.Use();
+	snowShader.SetInteger("snowTexture", 0);
+
+	particleSystem = new ParticleSystem(100, glm::vec3(0.0f, 0.0f, 0.0f), 20.0f, 20.0f, 10.0f);
 }
 
 void Game::Update(GLfloat dt)
@@ -175,6 +184,7 @@ void Game::Update(GLfloat dt)
 	//particles->Update(dt, 2, carShift, carPos, glm::vec2(100.0f, 100.0f));
 	carShift = glm::vec3(0.0f, 0.0f, 0.0f);
 
+	particleSystem->Update(dt, camera->Position);
 }
 
 
@@ -431,6 +441,8 @@ void Game::Render()
 	snowfall.setCamera(camera->Position);
 	snowfall.DrawParticle(camera->GetViewMatrix(), projection);
 	
+	particleSystem->Draw(ResourceManager::GetShader("snowShader"), camera->GetViewMatrix(), projection);
+
 	// Compile and setup the textshader
 	projection = glm::ortho(0.0f, static_cast<GLfloat>(Width), 0.0f, static_cast<GLfloat>(Height));
 	ResourceManager::GetShader("textShader").Use().SetMatrix4("projection", projection);

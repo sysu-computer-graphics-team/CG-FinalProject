@@ -23,9 +23,9 @@ int CParticle::Create(long num)
 		delete[]data;
 
 	// 创建数组 //
-	if (data = new Particle[num])
+	if (data = new myParticle[num])
 	{
-		memset(data, 0, sizeof(Particle)*numparticle);
+		memset(data, 0, sizeof(myParticle)*numparticle);
 		numparticle = num;
 
 		// 返回粒子个数 //
